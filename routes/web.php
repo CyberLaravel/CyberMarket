@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SellerController;
 use Illuminate\Foundation\Application;
@@ -24,37 +25,34 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+
+    Route::resource('products', controller: ProductController::class);
+    Route::resource('orders', OrderController::class);
 });
 
-// Admin routes
-Route::middleware([
+// Define a common middleware group
+$commonMiddleware = [
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
-    'admin'
-])->group(function () {
+];
+
+// Admin routes
+Route::middleware($commonMiddleware + ['admin'])->group(function () {
     Route::get(
         '/admin/dashboard',
         [AdminController::class, 'dashboard']
     )->name('admin.dashboard');
+
     // Add more admin routes here
 });
 
 // Seller routes
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
-    'seller'
-])->group(function () {
+Route::middleware($commonMiddleware + ['seller'])->group(function () {
     Route::get(
         '/seller/dashboard',
         [SellerController::class, 'dashboard']
     )->name('seller.dashboard');
     // Add more seller routes here
-});
-
-
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-    Route::resource('products', controller: ProductController::class);
 });

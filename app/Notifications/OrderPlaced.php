@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Order;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -11,7 +12,7 @@ class OrderPlaced extends Notification
 {
     use Queueable;
 
-    protected array  $orderDetails;
+    protected array $orderDetails;
 
     /**
      * Create a new notification instance.
