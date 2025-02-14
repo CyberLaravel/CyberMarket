@@ -32,7 +32,7 @@
                         {{ status }}
                     </div>
 
-                    <form @submit.prevent="handleSubmit" class="space-y-6">
+                    <form @submit.prevent="handleLogin" class="space-y-6">
                         <div>
                             <label
                                 for="email"
@@ -124,10 +124,10 @@
                     <span class="text-sm text-gray-600"
                         >Don't have an account?</span
                     >
-                    <a
-                        href="#"
+                    <Link
+                        :href="route('register')"
                         class="ml-1 text-sm font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out"
-                        >Sign up</a
+                        >Sign up</Link
                     >
                 </div>
             </div>
@@ -136,6 +136,8 @@
 </template>
 
 <script setup>
+import { Head, Link } from "@inertiajs/vue3";
+
 defineProps(["canResetPassword", "status", "errors"]);
 const emit = defineEmits(["submit"]);
 
@@ -143,7 +145,7 @@ const email = defineModel("email");
 const password = defineModel("password");
 const rememberMe = defineModel("rememberMe");
 
-function handleSubmit() {
+function handleLogin() {
     emit("submit", { email, password, rememberMe });
 }
 </script>

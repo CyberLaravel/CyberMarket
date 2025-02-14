@@ -26,7 +26,6 @@ const handleLogin = () => {
 
 <template>
     <CorporateMinimalistLogin
-        :handle-login="handleLogin"
         :can-reset-password="canResetPassword"
         :status="status"
         v-model:email="form.email"
