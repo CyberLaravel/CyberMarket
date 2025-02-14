@@ -1,7 +1,7 @@
 <script setup>
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
 import {
     Card,
     CardContent,
@@ -9,11 +9,11 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
-import { toast } from "@/components/ui/toast";
+} from "@/Components/ui/card";
+import { toast } from "@/Components/ui/toast";
 
 import { useForm, Link, router } from "@inertiajs/vue3";
-import DropdownMenuItem from "@/components/ui/dropdown-menu/DropdownMenuItem.vue";
+import DropdownMenuItem from "@/Components/ui/dropdown-menu/DropdownMenuItem.vue";
 
 const props = defineProps({
     status: String,

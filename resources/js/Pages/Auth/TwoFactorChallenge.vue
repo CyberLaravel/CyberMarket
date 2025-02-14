@@ -1,7 +1,7 @@
 <script setup>
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
 import { useForm as inertiaUseForm } from "@inertiajs/vue3";
 import { ref } from "vue";
 import {
@@ -11,7 +11,7 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
+} from "@/Components/ui/card";
 import {
     FormControl,
     FormDescription,
@@ -19,7 +19,7 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/form";
+} from "@/Components/ui/form";
 import { useForm as veeUseForm } from "vee-validate";
 import { z } from "zod";
 import { toTypedSchema } from "@vee-validate/zod";
@@ -111,8 +111,6 @@ const toggleRecoveryCode = () => {
     inertiaForm.reset("code", "recovery_code");
 };
 </script>
-
-
 
 <template>
     {{ veeForm.errors }}

@@ -1,8 +1,8 @@
 <script setup>
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
+import { Checkbox } from "@/Components/ui/checkbox";
 import {
     Card,
     CardContent,
@@ -10,7 +10,7 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
+} from "@/Components/ui/card";
 import {
     Form,
     FormControl,
@@ -19,8 +19,8 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/veeForm";
-import { toast } from "@/components/ui/toast";
+} from "@/Components/ui/veeForm";
+import { toast } from "@/Components/ui/toast";
 import { toTypedSchema } from "@vee-validate/zod";
 
 import { Head, Link } from "@inertiajs/vue3";

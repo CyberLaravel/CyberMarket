@@ -3,6 +3,8 @@ import MainNav from "./MainNav.vue";
 import Search from "./Search.vue";
 import TeamSwitcher from "./TeamSwitcher.vue";
 import UserNav from "./UserNav.vue";
+import CartButton from "@/Components/Cart/CartButton.vue";
+
 defineProps(["teams"]);
 </script>
 
@@ -14,6 +16,7 @@ defineProps(["teams"]);
             <div class="ml-auto flex items-center space-x-4">
                 <Search />
                 <UserNav />
+                <CartButton />
             </div>
         </div>
     </div>

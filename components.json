@@ -12,7 +12,8 @@
   },
   "framework": "laravel",
   "aliases": {
-    "components": "@/components",
-    "utils": "@/lib/utils"
+    "components": "@/Components",
+    "utils": "@/lib/utils",
+    "stores": "@/Stores"
   }
 }

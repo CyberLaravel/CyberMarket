@@ -1,6 +1,6 @@
 <script setup>
 import { Head } from "@inertiajs/vue3";
-import Toaster from "@/components/ui/toast/Toaster.vue";
+import Toaster from "@/Components/ui/toast/Toaster.vue";
 import TheNavbar from "@/Components/Navbar/TheNavbar.vue";
 import {
     Card,
@@ -9,7 +9,7 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
+} from "@/Components/ui/card";
 
 defineProps({
     title: String,
@@ -44,7 +44,7 @@ defineProps({
             </header>
 
             <!-- Page Content -->
-            <main class="max-w-7xl mx-auto">
+            <main class="container mx-auto">
                 <slot />
             </main>
 

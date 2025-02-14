@@ -3,7 +3,7 @@ import { Head, Link, useForm } from "@inertiajs/vue3";
 import ProductBox from "@/Components/Products/ProductBox.vue";
 import ProductList from "@/Components/Products/ProductList.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Components/ui/button";
 
 defineProps({ products: Array });
 </script>
