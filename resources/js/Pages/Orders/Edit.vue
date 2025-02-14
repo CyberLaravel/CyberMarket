@@ -13,20 +13,31 @@ const submit = () => {
 </script>
 
 <template>
-    <div>
-        <h1 class="text-2xl font-bold">Edit Order #{{ order.id }}</h1>
+    <div class="p-4 bg-white shadow rounded">
+        <h1 class="text-3xl font-bold mb-4">Edit Order #{{ order.id }}</h1>
 
         <form @submit.prevent="submit">
-            <label>Amount</label>
-            <input v-model="form.amount" type="number" required />
+            <div class="mb-4">
+                <label class="block mb-1">Amount</label>
+                <input
+                    v-model="form.amount"
+                    type="number"
+                    required
+                    class="border rounded p-2 w-full"
+                />
+            </div>
 
-            <label>Status</label>
-            <select v-model="form.status">
-                <option>Pending</option>
-                <option>Completed</option>
-            </select>
+            <div class="mb-4">
+                <label class="block mb-1">Status</label>
+                <select v-model="form.status" class="border rounded p-2 w-full">
+                    <option>Pending</option>
+                    <option>Completed</option>
+                </select>
+            </div>
 
-            <button type="submit">Update</button>
+            <button type="submit" class="bg-blue-500 text-white rounded p-2">
+                Update
+            </button>
         </form>
     </div>
 </template>

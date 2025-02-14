@@ -1,66 +1,68 @@
 <script setup>
-import AppLayout from "@/Layouts/AppLayout.vue";
-import { Link } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { Head, Link } from "@inertiajs/vue3";
 
-const products = ref([
-    {
-        id: 1,
-        name: "Neon Keyboard",
-        description: "A mechanical keyboard with customizable RGB lighting.",
-        price: 99.99,
-        image: "https://dummyimage.com/300x250.png&text=Neon+Keyboard",
+defineProps({
+    products: {
+        type: Array,
+        required: true,
     },
-    {
-        id: 2,
-        name: "Cyberpunk Headset",
-        description: "High-quality headset with immersive sound.",
-        price: 149.99,
-        image: "https://dummyimage.com/300x250.png&text=Cyberpunk+Headset",
+    laravelVersion: {
+        type: String,
+        required: true,
     },
-    {
-        id: 3,
-        name: "Glitch Mouse",
-        description: "Ergonomic mouse with programmable buttons.",
-        price: 59.99,
-        image: "https://dummyimage.com/300x250.png&text=Glitch+Mouse",
+    phpVersion: {
+        type: String,
+        required: true,
     },
-    {
-        id: 4,
-        name: "Holo Display",
-        description: "A futuristic display with holographic capabilities.",
-        price: 299.99,
-        image: "https://dummyimage.com/300x250.png&text=Holo+Display",
-    },
-    {
-        id: 5,
-        name: "VR Headset",
-        description: "Immersive virtual reality headset for gaming.",
-        price: 399.99,
-        image: "https://dummyimage.com/300x250.png&text=VR+Headset",
-    },
-    {
-        id: 6,
-        name: "Gaming Chair",
-        description: "Comfortable chair designed for long gaming sessions.",
-        price: 199.99,
-        image: "https://dummyimage.com/300x250.png&text=Gaming+Chair",
-    },
-]);
+});
+
+function handleImageError() {
+    document.getElementById("screenshot-container")?.classList.add("!hidden");
+    document.getElementById("docs-card")?.classList.add("!row-span-1");
+    document.getElementById("docs-card-content")?.classList.add("!flex-row");
+    document.getElementById("background")?.classList.add("!hidden");
+}
 </script>
 
 <template>
-    <AppLayout title="Dashboard">
-        <template #header>
-            <h2
-                class="font-semibold text-xl text-yellow-400 leading-tight glitch-effect"
+    <Head title="GlitchMart - Product Listing" />
+    <div class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+        <header
+            class="bg-gray-800 border-b border-yellow-400 sticky top-0 z-10"
+        >
+            <div
+                class="max-w-7xl mx-auto flex justify-between items-center p-4"
             >
-                Product Dashboard
-            </h2>
-        </template>
+                <h1 class="text-2xl font-bold text-yellow-400 glitch-effect">
+                    GlitchMart
+                </h1>
+                <nav class="flex space-x-4">
+                    <Link
+                        :href="route('home')"
+                        class="text-blue-300 hover:text-yellow-400 transition"
+                        >Home</Link
+                    >
+                    <Link
+                        :href="route('about')"
+                        class="text-blue-300 hover:text-yellow-400 transition"
+                        >About</Link
+                    >
+                    <Link
+                        :href="route('contact')"
+                        class="text-blue-300 hover:text-yellow-400 transition"
+                        >Contact</Link
+                    >
+                </nav>
+            </div>
+        </header>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <main class="flex-grow flex items-center justify-center">
+            <div class="max-w-6xl w-full p-6">
+                <h2
+                    class="text-3xl font-bold text-yellow-400 glitch-effect mb-6"
+                >
+                    Featured Products
+                </h2>
                 <div class="grid gap-6 lg:grid-cols-3">
                     <div
                         v-for="product in products"
@@ -93,8 +95,14 @@ const products = ref([
                     </div>
                 </div>
             </div>
-        </div>
-    </AppLayout>
+        </main>
+
+        <footer
+            class="bg-gray-800 border-t border-yellow-400 text-center text-sm text-blue-300 py-4"
+        >
+            Laravel v{{ laravelVersion }} (PHP v{{ phpVersion }})
+        </footer>
+    </div>
 </template>
 
 <style>
