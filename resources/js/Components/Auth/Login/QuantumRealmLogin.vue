@@ -138,23 +138,3 @@ const handleLogin = () => {
     });
 };
 </script>
-
-<style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap");
-
-body {
-    font-family: "Space Mono", monospace;
-}
-
-@keyframes laraMart-float {
-    0%,
-    100% {
-        transform: translateY(0) scale(1);
-        opacity: 0.5;
-    }
-    50% {
-        transform: translateY(-20px) scale(1.5);
-        opacity: 1;
-    }
-}
-</style>

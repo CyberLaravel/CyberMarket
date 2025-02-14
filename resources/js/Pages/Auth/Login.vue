@@ -1,6 +1,6 @@
 <script setup>
 import { useForm } from "@inertiajs/vue3";
-import CorporateMinimalistLogin from "@/Components/Auth/Login/CorporateMinimalistLogin.vue";
+import DefaultLogin from "@/Components/Auth/Login/DefaultLogin.vue";
 
 defineProps({
     canResetPassword: Boolean,
@@ -25,7 +25,7 @@ const handleLogin = () => {
 </script>
 
 <template>
-    <CorporateMinimalistLogin
+    <DefaultLogin
         :can-reset-password="canResetPassword"
         :status="status"
         v-model:email="form.email"

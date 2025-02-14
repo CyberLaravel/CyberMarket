@@ -1,6 +1,12 @@
 <script setup>
 import { ref } from "vue";
 import { useForm } from "@inertiajs/vue3";
+import AppLayout from "@/Layouts/AppLayout.vue";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
 
 const form = useForm({
     name: "",
@@ -9,45 +15,111 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post("/products");
+    form.post("/products", {
+        onSuccess: () => {
+            form.reset();
+            toast({
+                title: "Success",
+                description: "Product has been added successfully",
+            });
+        },
+        onError: () => {
+            toast({
+                title: "Error",
+                description: "Failed to add product. Please try again.",
+                variant: "destructive",
+            });
+        },
+        preserveScroll: true,
+    });
 };
 </script>
 
 <template>
-    <div class="bg-gray-900 text-gray-100 p-6 rounded-lg shadow-lg">
-        <h1 class="text-4xl font-bold text-yellow-400 mb-4 glitch">
-            Add New Product
-        </h1>
-        <form @submit.prevent="submit" class="space-y-4 flex flex-col">
-            <div class="flex flex-col md:flex-row md:space-x-4">
-                <input
-                    v-model="form.name"
-                    placeholder="Product Name"
-                    required
-                    class="border border-yellow-400 bg-gray-800 text-gray-100 p-2 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 flex-1"
-                />
-                <textarea
-                    v-model="form.description"
-                    placeholder="Description"
-                    required
-                    class="border border-yellow-400 bg-gray-800 text-gray-100 p-2 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 flex-1"
-                ></textarea>
-            </div>
-            <div class="flex flex-col md:flex-row md:space-x-4">
-                <input
-                    v-model="form.price"
-                    type="number"
-                    placeholder="Price"
-                    required
-                    class="border border-yellow-400 bg-gray-800 text-gray-100 p-2 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 flex-1"
-                />
-                <button
-                    type="submit"
-                    class="bg-yellow-400 text-black p-2 rounded-md hover:bg-yellow-300 transition flex-1"
-                >
-                    Submit
-                </button>
-            </div>
-        </form>
-    </div>
+    <AppLayout title="Create Product">
+        <!-- Header Content -->
+        <template #headerTitle> Create New Product </template>
+        <template #headerDescription>
+            Add a new product to your inventory
+        </template>
+
+        <!-- Main Content -->
+        <div class="py-6 px-4 sm:px-6 lg:px-8">
+            <form @submit.prevent="submit" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <Label for="name">Product Name</Label>
+                        <Input
+                            id="name"
+                            v-model="form.name"
+                            placeholder="Enter product name"
+                            :error="form.errors.name"
+                            required
+                        />
+                        <span
+                            v-if="form.errors.name"
+                            class="text-sm text-destructive"
+                        >
+                            {{ form.errors.name }}
+                        </span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <Label for="price">Price</Label>
+                        <Input
+                            id="price"
+                            v-model="form.price"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            placeholder="Enter price"
+                            :error="form.errors.price"
+                            required
+                        />
+                        <span
+                            v-if="form.errors.price"
+                            class="text-sm text-destructive"
+                        >
+                            {{ form.errors.price }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <Label for="description">Description</Label>
+                    <Textarea
+                        id="description"
+                        v-model="form.description"
+                        placeholder="Enter product description"
+                        :error="form.errors.description"
+                        required
+                        rows="4"
+                    />
+                    <span
+                        v-if="form.errors.description"
+                        class="text-sm text-destructive"
+                    >
+                        {{ form.errors.description }}
+                    </span>
+                </div>
+
+                <div class="flex justify-end">
+                    <Button type="submit" :disabled="form.processing">
+                        {{
+                            form.processing
+                                ? "Adding Product..."
+                                : "Add Product"
+                        }}
+                    </Button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Footer Content -->
+        <template #footerContent>
+            <p class="text-sm text-muted-foreground">
+                All products will be reviewed before being published.
+            </p>
+        </template>
+    </AppLayout>
 </template>

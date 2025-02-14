@@ -1,12 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { Link, router, useForm } from "@inertiajs/vue3";
-import ActionMessage from "@/Components/ActionMessage.vue";
-import FormSection from "@/Components/FormSection.vue";
-import CyberInputError from "@/Components/CyberInputError.vue";
-import CyberInputLabel from "@/Components/CyberInputLabel.vue";
-import CyberButton from "@/Components/CyberButton.vue";
-import CyberInput from "@/Components/CyberInput.vue";
+import { useForm } from "@inertiajs/vue3";
 
 const props = defineProps({
     user: Object,
@@ -19,9 +13,8 @@ const form = useForm({
     photo: null,
 });
 
-const verificationLinkSent = ref(null);
-const photoPreview = ref(null);
 const photoInput = ref(null);
+const photoPreview = ref(null);
 
 const updateProfileInformation = () => {
     if (photoInput.value) {
@@ -33,10 +26,6 @@ const updateProfileInformation = () => {
         preserveScroll: true,
         onSuccess: () => clearPhotoFileInput(),
     });
-};
-
-const sendEmailVerification = () => {
-    verificationLinkSent.value = true;
 };
 
 const selectNewPhoto = () => {
@@ -57,16 +46,6 @@ const updatePhotoPreview = () => {
     reader.readAsDataURL(photo);
 };
 
-const deletePhoto = () => {
-    router.delete(route("current-user-photo.destroy"), {
-        preserveScroll: true,
-        onSuccess: () => {
-            photoPreview.value = null;
-            clearPhotoFileInput();
-        },
-    });
-};
-
 const clearPhotoFileInput = () => {
     if (photoInput.value?.value) {
         photoInput.value.value = null;
@@ -75,143 +54,102 @@ const clearPhotoFileInput = () => {
 </script>
 
 <template>
-    <FormSection @submitted="updateProfileInformation">
-        <template #title>
-            <span class="text-yellow-400">Profile Information</span>
-        </template>
-
-        <template #description>
-            <span class="text-blue-300"
-                >Update your account's profile information and email
-                address.</span
+    <form @submit.prevent="updateProfileInformation" class="space-y-6">
+        <div
+            v-if="$page.props.jetstream.managesProfilePhotos"
+            class="space-y-2"
+        >
+            <label for="photo" class="block text-sm font-medium text-blue-300"
+                >Profile Photo</label
             >
-        </template>
 
-        <template #form>
-            <!-- Profile Photo -->
-            <div
-                v-if="$page.props.jetstream.managesProfilePhotos"
-                class="col-span-6 sm:col-span-4"
+            <div v-show="!photoPreview" class="mt-2">
+                <img
+                    :src="user.profile_photo_url"
+                    :alt="user.name"
+                    class="rounded-full h-20 w-20 object-cover"
+                />
+            </div>
+
+            <div v-show="photoPreview" class="mt-2">
+                <span
+                    class="block rounded-full w-20 h-20 bg-cover bg-no-repeat bg-center"
+                    :style="'background-image: url(\'' + photoPreview + '\');'"
+                />
+            </div>
+
+            <button
+                type="button"
+                @click.prevent="selectNewPhoto"
+                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-colors duration-200"
             >
-                <!-- Profile Photo File Input -->
-                <input
-                    id="photo"
-                    ref="photoInput"
-                    type="file"
-                    class="hidden"
-                    @change="updatePhotoPreview"
-                />
+                Select A New Photo
+            </button>
 
-                <CyberInputLabel for="photo" value="Photo" />
+            <input
+                ref="photoInput"
+                type="file"
+                class="hidden"
+                @change="updatePhotoPreview"
+            />
 
-                <!-- Current Profile Photo -->
-                <div v-show="!photoPreview" class="mt-2">
-                    <img
-                        :src="user.profile_photo_url"
-                        :alt="user.name"
-                        class="rounded-full size-20 object-cover"
-                    />
-                </div>
+            <p v-if="form.errors.photo" class="mt-2 text-sm text-red-500">
+                {{ form.errors.photo }}
+            </p>
+        </div>
 
-                <!-- New Profile Photo Preview -->
-                <div v-show="photoPreview" class="mt-2">
-                    <span
-                        class="block rounded-full size-20 bg-cover bg-no-repeat bg-center"
-                        :style="
-                            'background-image: url(\'' + photoPreview + '\');'
-                        "
-                    />
-                </div>
+        <div>
+            <label for="name" class="block text-sm font-medium text-blue-300"
+                >Name</label
+            >
+            <input
+                id="name"
+                v-model="form.name"
+                type="text"
+                class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-blue-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+                autocomplete="name"
+            />
+            <p v-if="form.errors.name" class="mt-2 text-sm text-red-500">
+                {{ form.errors.name }}
+            </p>
+        </div>
 
-                <CyberButton
-                    class="mt-2 me-2"
-                    type="button"
-                    @click.prevent="selectNewPhoto"
-                >
-                    Select A New Photo
-                </CyberButton>
+        <div>
+            <label for="email" class="block text-sm font-medium text-blue-300"
+                >Email</label
+            >
+            <input
+                id="email"
+                v-model="form.email"
+                type="email"
+                class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-blue-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+                autocomplete="username"
+            />
+            <p v-if="form.errors.email" class="mt-2 text-sm text-red-500">
+                {{ form.errors.email }}
+            </p>
+        </div>
 
-                <CyberButton
-                    v-if="user.profile_photo_path"
-                    type="button"
-                    class="mt-2"
-                    @click.prevent="deletePhoto"
-                >
-                    Remove Photo
-                </CyberButton>
-
-                <CyberInputError :message="form.errors.photo" class="mt-2" />
-            </div>
-
-            <!-- Name -->
-            <div class="col-span-6 sm:col-span-4">
-                <CyberInputLabel for="name" value="Name" />
-                <CyberInput
-                    id="name"
-                    v-model="form.name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="name"
-                />
-                <CyberInputError :message="form.errors.name" class="mt-2" />
-            </div>
-
-            <!-- Email -->
-            <div class="col-span-6 sm:col-span-4">
-                <CyberInputLabel for="email" value="Email" />
-                <CyberInput
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="username"
-                />
-                <CyberInputError :message="form.errors.email" class="mt-2" />
-
-                <div
-                    v-if="
-                        $page.props.jetstream.hasEmailVerification &&
-                        user.email_verified_at === null
-                    "
-                >
-                    <p class="text-sm mt-2 text-blue-300">
-                        Your email address is unverified.
-
-                        <Link
-                            :href="route('verification.send')"
-                            method="post"
-                            as="button"
-                            class="underline text-sm text-yellow-400 hover:text-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
-                            @click.prevent="sendEmailVerification"
-                        >
-                            Click here to re-send the verification email.
-                        </Link>
-                    </p>
-
-                    <div
-                        v-show="verificationLinkSent"
-                        class="mt-2 font-medium text-sm text-green-400"
-                    >
-                        A new verification link has been sent to your email
-                        address.
-                    </div>
-                </div>
-            </div>
-        </template>
-
-        <template #actions>
-            <ActionMessage :on="form.recentlySuccessful" class="me-3">
-                Saved.
-            </ActionMessage>
-
-            <CyberButton
+        <div class="flex items-center">
+            <button
+                type="submit"
                 :class="{ 'opacity-25': form.processing }"
                 :disabled="form.processing"
+                class="px-4 py-2 bg-yellow-500 text-gray-900 rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-colors duration-200"
             >
                 Save
-            </CyberButton>
-        </template>
-    </FormSection>
+            </button>
+
+            <p
+                v-if="form.recentlySuccessful"
+                class="text-sm text-green-400 ml-3"
+            >
+                Saved.
+            </p>
+        </div>
+    </form>
 </template>
+
+

@@ -64,7 +64,3 @@ defineExpose({ open });
         </transition>
     </div>
 </template>
-
-<style scoped>
-/* Add any additional styles here */
-</style>

@@ -43,8 +43,6 @@ Route::middleware([
     })->name('dashboard');
 
 
-
-
     Route::resource('products', controller: ProductController::class);
     Route::resource('orders', OrderController::class);
 });

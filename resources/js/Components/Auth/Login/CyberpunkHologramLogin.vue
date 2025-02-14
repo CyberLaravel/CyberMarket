@@ -98,22 +98,3 @@ const handleLogin = () => {
     });
 };
 </script>
-
-<style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap");
-
-body {
-    font-family: "Orbitron", sans-serif;
-}
-
-.animate-text-shimmer {
-    background-size: 200% auto;
-    animation: textShimmer 2s linear infinite;
-}
-
-@keyframes textShimmer {
-    to {
-        background-position: 200% center;
-    }
-}
-</style>

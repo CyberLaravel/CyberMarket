@@ -16,18 +16,3 @@
         </svg>
     </div>
 </template>
-
-<style scoped>
-.cyber-mark {
-    animation: neon-pulse 1.5s infinite alternate;
-}
-
-@keyframes neon-pulse {
-    from {
-        filter: drop-shadow(0 0 2px #00ffff) drop-shadow(0 0 4px #00ffff);
-    }
-    to {
-        filter: drop-shadow(0 0 4px #00ffff) drop-shadow(0 0 8px #00ffff);
-    }
-}
-</style>

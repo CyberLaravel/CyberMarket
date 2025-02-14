@@ -1,8 +1,42 @@
+<script setup>
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { toast } from "@/components/ui/toast";
+
+import { useForm, Link, router } from "@inertiajs/vue3";
+import DropdownMenuItem from "@/components/ui/dropdown-menu/DropdownMenuItem.vue";
+
+const props = defineProps({
+    status: String,
+});
+
+const form = useForm({});
+
+const handleResendVerification = () => {
+    // Handle resend verification email logic here
+    console.log("Resend verification email attempt");
+    form.post(route("verification.send"));
+};
+
+const logout = () => {
+    router.post(route("logout"));
+};
+</script>
+
 <template>
     <div class="min-h-screen flex items-center justify-center bg-gray-100">
         <div class="w-full max-w-md">
-            <div class="bg-white shadow-2xl rounded-lg overflow-hidden">
-                <div class="p-8">
+            <Card class="bg-white shadow-2xl rounded-lg overflow-hidden">
+                <CardHeader class="p-8">
                     <div class="text-center mb-8">
                         <svg
                             class="mx-auto h-12 w-auto text-indigo-600"
@@ -24,7 +58,9 @@
                             We've sent a verification link to your email
                         </p>
                     </div>
+                </CardHeader>
 
+                <CardContent>
                     <div class="text-center">
                         <p class="text-sm text-gray-600 mb-4">
                             Please check your email and click on the
@@ -41,31 +77,26 @@
                         @submit.prevent="handleResendVerification"
                         class="mt-6"
                     >
-                        <button
-                            type="submit"
-                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        >
+                        <Button class="w-full">
                             Resend Verification Email
-                        </button>
+                        </Button>
                     </form>
 
                     <div class="mt-6 flex space-x-4">
-                        <Link
-                            :href="route('profile.show')"
-                            class="text-center flex-1 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        >
-                            Edit Profile
+                        <Link :href="route('profile.show')" class="w-full">
+                            <Button class="w-full" variant="secondary">
+                                Edit Profile
+                            </Button>
                         </Link>
-                        <Link
-                            :href="route('logout')"
-                            class="text-center flex-1 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        >
-                            Logout
-                        </Link>
+                        <form @submit.prevent="logout" class="w-full">
+                            <Button class="w-full" variant="secondary">
+                                Logout
+                            </Button>
+                        </form>
                     </div>
-                </div>
+                </CardContent>
 
-                <div
+                <CardFooter
                     class="px-8 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-center"
                 >
                     <span class="text-sm text-gray-600">Already verified?</span>
@@ -74,32 +105,8 @@
                         class="ml-1 text-sm font-medium text-indigo-600 hover:text-indigo-500"
                         >Return to login</Link
                     >
-                </div>
-            </div>
+                </CardFooter>
+            </Card>
         </div>
     </div>
 </template>
-
-<script setup>
-import { useForm, Link } from "@inertiajs/vue3";
-
-const props = defineProps({
-    status: String,
-});
-
-const form = useForm({});
-
-const handleResendVerification = () => {
-    // Handle resend verification email logic here
-    console.log("Resend verification email attempt");
-    form.post(route("verification.send"));
-};
-</script>
-
-<style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
-
-body {
-    font-family: "Inter", sans-serif;
-}
-</style>

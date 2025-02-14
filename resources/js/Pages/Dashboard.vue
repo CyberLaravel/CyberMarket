@@ -51,13 +51,10 @@ const products = ref([
 
 <template>
     <AppLayout title="Dashboard">
-        <template #header>
-            <h2
-                class="font-semibold text-xl text-yellow-400 leading-tight glitch-effect"
-            >
-                Product Dashboard
-            </h2>
-        </template>
+        <template #headerTitle> Product Dashboard </template>
+        <template #headerDescription> Product Dashboard dsecription</template>
+        <template #headerContent> Product Dashboard </template>
+        <template #headerFooter> Product Dashboard </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -94,48 +91,10 @@ const products = ref([
                 </div>
             </div>
         </div>
+
+        <template #footerTitle> Product Dashboard </template>
+        <template #footerDescription> Product Dashboard dsecription</template>
+        <template #footerContent> Product Dashboard </template>
+        <template #footerFooter> Product Dashboard </template>
     </AppLayout>
 </template>
-
-<style>
-@import url("https://fonts.googleapis.com/css2?family=Orbitron&display=swap");
-
-body {
-    font-family: "Orbitron", sans-serif;
-}
-
-.glitch-effect {
-    position: relative;
-    color: #ff2d20;
-    animation: glitch 1s infinite;
-}
-
-@keyframes glitch {
-    0% {
-        text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
-    }
-    20% {
-        text-shadow: -1px -1px 0 rgba(255, 255, 255, 0.5);
-    }
-    40% {
-        text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
-    }
-    60% {
-        text-shadow: -1px -1px 0 rgba(255, 255, 255, 0.5);
-    }
-    80% {
-        text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
-    }
-    100% {
-        text-shadow: -1px -1px 0 rgba(255, 255, 255, 0.5);
-    }
-}
-
-a {
-    text-decoration: none;
-}
-
-a:hover {
-    text-shadow: 0 0 5px #00fffc, 0 0 10px #00fffc, 0 0 15px #00fffc;
-}
-</style>
