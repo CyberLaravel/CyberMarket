@@ -10,7 +10,7 @@ const navLinks = [
         class: "text-muted-foreground",
     },
     {
-        route: "dashboard",
+        route: "products.index",
         label: "Products",
         class: "text-muted-foreground",
     },

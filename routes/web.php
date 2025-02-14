@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SellerController;
@@ -16,6 +17,8 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+
 
 Route::get('/home', function () {
     return Inertia::render('Home');
@@ -45,6 +48,10 @@ Route::middleware([
 
     Route::resource('products', controller: ProductController::class);
     Route::resource('orders', OrderController::class);
+
+
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
 });
 
 // Define a common middleware group

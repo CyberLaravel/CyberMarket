@@ -14,10 +14,18 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->integer('quantity');
-            $table->decimal('amount', 10, 2);
-            $table->string('status')->default('Pending');
+            $table->string('full_name');
+            $table->string('email');
+            $table->string('phone');
+            $table->string('address');
+            $table->string('city');
+            $table->string('state');
+            $table->string('postal_code');
+            $table->string('country');
+            $table->decimal('subtotal', 10, 2);
+            $table->decimal('tax', 10, 2);
+            $table->decimal('total', 10, 2);
+            $table->string('status');
             $table->timestamps();
         });
     }

@@ -60,5 +60,9 @@ export const useCartStore = defineStore("cart", {
         },
     },
 
-    persist: true,
+    persist: {
+        key: 'cart-storage',
+        storage: localStorage,
+        paths: ['items'], // only persist the items array
+    },
 });
