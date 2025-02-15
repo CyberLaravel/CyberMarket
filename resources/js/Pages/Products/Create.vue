@@ -8,6 +8,17 @@ import { Textarea } from "@/Components/ui/textarea";
 import { Button } from "@/Components/ui/button";
 import { toast } from "@/Components/ui/toast";
 import { XMarkIcon } from "@heroicons/vue/24/solid";
+import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem,
+} from "@/Components/ui/select";
+
+const props = defineProps({
+    categories: Array,
+});
 
 const form = useForm({
     name: "",
@@ -15,6 +26,7 @@ const form = useForm({
     price: "",
     images: [],
     primary_image_index: 0,
+    category_id: "",
 });
 
 const isDragging = ref(false);
@@ -186,6 +198,36 @@ const removeImage = (index) => {
                         >
                             {{ form.errors.description }}
                         </span>
+                    </div>
+
+                    <div class="space-y-2 mt-6">
+                        <Label
+                            for="category_id"
+                            class="text-yellow-400 font-orbitron"
+                            >Category</Label
+                        >
+                        <Select
+                            v-model="form.category_id"
+                            :error="form.errors.category_id"
+                        >
+                            <SelectTrigger
+                                class="bg-gray-800 border-yellow-400 text-gray-100"
+                            >
+                                <SelectValue placeholder="Select Category" />
+                            </SelectTrigger>
+                            <SelectContent
+                                class="bg-gray-800 border-yellow-400 text-gray-100 shadow-neon"
+                            >
+                                <SelectItem
+                                    v-for="category in categories"
+                                    :key="category.id"
+                                    :value="category.id"
+                                    class="hover:bg-gray-700 hover:text-yellow-400 focus:bg-gray-700 focus:text-yellow-400"
+                                >
+                                    {{ category.name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
 
                     <div class="space-y-2 mt-6">

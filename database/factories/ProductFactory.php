@@ -2,8 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
 /**
@@ -18,13 +20,16 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
+        $name = fake()->words(3, true);
         return [
             'user_id' => Role::findByName('seller')->inRandomOrder()->first()->id,
-            'name' => $this->faker->words(3, true),
-            'description' => $this->faker->sentence(),
-            'price' => $this->faker->randomFloat(2, 5, 1000),
+            'name' => $name,
+            'slug' => Str::slug($name),
+            'description' => fake()->sentence(),
+            'price' => fake()->randomFloat(2, 5, 1000),
             'created_at' => now(),
             'updated_at' => now(),
+            'category_id' => Category::inRandomOrder()->first()->id,
         ];
     }
 }

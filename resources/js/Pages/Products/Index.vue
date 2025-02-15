@@ -20,6 +20,7 @@ import debounce from "lodash/debounce";
 const props = defineProps({
     products: Array,
     filters: Object,
+    categories: Array,
 });
 
 console.log({ products: props.products });
@@ -104,24 +105,36 @@ watch([sortBy, category], ([newSort, newCategory]) => {
                                 <SelectValue placeholder="Sort by" />
                             </SelectTrigger>
                             <SelectContent
-                                class="bg-gray-800 border-yellow-400"
+                                class="bg-gray-800 border-yellow-400 text-gray-100 shadow-neon"
                             >
-                                <SelectItem value="newest"
+                                <SelectItem
+                                    value="newest"
+                                    class="hover:bg-gray-700 hover:text-yellow-400 focus:bg-gray-700 focus:text-yellow-400"
                                     >Newest First</SelectItem
                                 >
-                                <SelectItem value="oldest"
+                                <SelectItem
+                                    value="oldest"
+                                    class="hover:bg-gray-700 hover:text-yellow-400 focus:bg-gray-700 focus:text-yellow-400"
                                     >Oldest First</SelectItem
                                 >
-                                <SelectItem value="price_asc"
+                                <SelectItem
+                                    value="price_asc"
+                                    class="hover:bg-gray-700 hover:text-yellow-400 focus:bg-gray-700 focus:text-yellow-400"
                                     >Price: Low to High</SelectItem
                                 >
-                                <SelectItem value="price_desc"
+                                <SelectItem
+                                    value="price_desc"
+                                    class="hover:bg-gray-700 hover:text-yellow-400 focus:bg-gray-700 focus:text-yellow-400"
                                     >Price: High to Low</SelectItem
                                 >
-                                <SelectItem value="name_asc"
+                                <SelectItem
+                                    value="name_asc"
+                                    class="hover:bg-gray-700 hover:text-yellow-400 focus:bg-gray-700 focus:text-yellow-400"
                                     >Name: A to Z</SelectItem
                                 >
-                                <SelectItem value="name_desc"
+                                <SelectItem
+                                    value="name_desc"
+                                    class="hover:bg-gray-700 hover:text-yellow-400 focus:bg-gray-700 focus:text-yellow-400"
                                     >Name: Z to A</SelectItem
                                 >
                             </SelectContent>
@@ -134,19 +147,20 @@ watch([sortBy, category], ([newSort, newCategory]) => {
                                 <SelectValue placeholder="Category" />
                             </SelectTrigger>
                             <SelectContent
-                                class="bg-gray-800 border-yellow-400"
+                                class="bg-gray-800 border-yellow-400 text-gray-100 shadow-neon"
                             >
-                                <SelectItem value="all"
+                                <SelectItem
+                                    value="all"
+                                    class="hover:bg-gray-700 hover:text-yellow-400 focus:bg-gray-700 focus:text-yellow-400"
                                     >All Categories</SelectItem
                                 >
-                                <SelectItem value="electronics"
-                                    >Electronics</SelectItem
+                                <SelectItem
+                                    v-for="category in categories"
+                                    :key="category.id"
+                                    :value="category.id.toString()"
+                                    class="hover:bg-gray-700 hover:text-yellow-400 focus:bg-gray-700 focus:text-yellow-400"
+                                    >{{ category.name }}</SelectItem
                                 >
-                                <SelectItem value="clothing"
-                                    >Clothing</SelectItem
-                                >
-                                <SelectItem value="books">Books</SelectItem>
-                                <!-- Add more categories as needed -->
                             </SelectContent>
                         </Select>
                     </div>

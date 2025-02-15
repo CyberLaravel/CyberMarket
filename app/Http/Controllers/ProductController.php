@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Category;
 
 class ProductController extends Controller
 {
@@ -34,7 +35,7 @@ class ProductController extends Controller
 
         // Apply category filter
         if ($request->has('category') && $request->category !== 'all') {
-            $query->where('category', $request->category);
+            $query->where('category_id', $request->category);
         }
 
         // Apply sorting
@@ -61,7 +62,8 @@ class ProductController extends Controller
 
         return Inertia::render('Products/Index', [
             'products' => $query->paginate(10),
-            'filters' => $request->only(['search', 'sort', 'category'])
+            'filters' => $request->only(['search', 'sort', 'category']),
+            'categories' => Category::all(),
         ]);
     }
 
@@ -89,6 +91,7 @@ class ProductController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
+            'category_id' => $request->category_id,
         ]);
 
         // Handle image uploads if necessary
@@ -131,6 +134,7 @@ class ProductController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
+            'category_id' => $request->category_id,
         ]);
 
         // Handle new image uploads if necessary

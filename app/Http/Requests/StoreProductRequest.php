@@ -25,6 +25,7 @@ class StoreProductRequest extends FormRequest
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
+            'category_id' => 'required|exists:categories,id',
         ];
 
         // Only require images for new products (POST requests)
@@ -38,5 +39,16 @@ class StoreProductRequest extends FormRequest
         }
 
         return $rules;
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     */
+    public function messages(): array
+    {
+        return [
+            'category_id.required' => 'Please select a category',
+            'category_id.exists' => 'The selected category is invalid',
+        ];
     }
 }

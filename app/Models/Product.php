@@ -17,7 +17,8 @@ class Product extends Model
         'description',
         'price',
         'image',
-        'primary_image'
+        'primary_image',
+        'category_id'
     ];
 
     public function seller()
@@ -43,5 +44,10 @@ class Product extends Model
     public function images()
     {
         return $this->hasMany(ProductImage::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }
