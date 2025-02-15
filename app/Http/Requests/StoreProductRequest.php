@@ -21,11 +21,22 @@ class StoreProductRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'price' => 'required|numeric',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validate images
+            'price' => 'required|numeric|min:0',
         ];
+
+        // Only require images for new products (POST requests)
+        if ($this->isMethod('POST')) {
+            $rules['images'] = 'required|array|min:1';
+            $rules['images.*'] = 'required|image|mimes:jpeg,png,jpg,gif|max:2048';
+        } else {
+            // Make images optional for updates (PUT/PATCH requests)
+            $rules['images'] = 'nullable|array';
+            $rules['images.*'] = 'image|mimes:jpeg,png,jpg,gif|max:2048';
+        }
+
+        return $rules;
     }
 }

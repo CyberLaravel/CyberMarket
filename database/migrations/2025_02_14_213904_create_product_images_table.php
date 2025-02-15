@@ -12,6 +12,7 @@ class CreateProductImagesTable extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained()->onDelete('cascade'); // Foreign key to products table
             $table->string('image_path'); // Column to store the image path
+            $table->boolean('is_primary')->default(false);
             $table->timestamps();
         });
     }

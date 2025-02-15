@@ -5,6 +5,8 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SellerController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProductImageController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -58,6 +60,12 @@ Route::middleware([
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::post('/checkout', [CheckoutController::class, 'store'])
         ->name('checkout.store');
+
+    Route::delete('/product-images/{productImage}', [ProductImageController::class, 'destroy'])
+        ->name('product-images.destroy');
+
+    Route::patch('/product-images/{productImage}/set-primary', [ProductImageController::class, 'setPrimary'])
+        ->name('product-images.set-primary');
 });
 
 // Define a common middleware group

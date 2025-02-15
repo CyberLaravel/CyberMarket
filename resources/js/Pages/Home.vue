@@ -1,161 +1,121 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { Head, Link } from "@inertiajs/vue3";
+import { Button } from "@/Components/ui/button";
+import { Link } from "@inertiajs/vue3";
 
-defineProps({
-    products: {
-        type: Array,
-        required: true,
+const features = [
+    {
+        title: "Digital Products",
+        description: "Browse our collection of high-quality digital products.",
+        icon: `<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>`,
     },
-    featuredProducts: {
-        type: Array,
-        default: () => [],
+    {
+        title: "Secure Transactions",
+        description:
+            "Your payments are protected with state-of-the-art security.",
+        icon: `<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>`,
     },
-    laravelVersion: {
-        type: String,
-        required: true,
+    {
+        title: "Instant Delivery",
+        description: "Get your products delivered instantly after purchase.",
+        icon: `<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>`,
     },
-    phpVersion: {
-        type: String,
-        required: true,
-    },
-});
-
-function handleImageError() {
-    document.getElementById("screenshot-container")?.classList.add("!hidden");
-    document.getElementById("docs-card")?.classList.add("!row-span-1");
-    document.getElementById("docs-card-content")?.classList.add("!flex-row");
-    document.getElementById("background")?.classList.add("!hidden");
-}
+];
 </script>
 
 <template>
     <AppLayout>
-        <Head title="GlitchMart - Product Listing" />
-        <div class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
-            <header
-                class="bg-gray-800 border-b border-yellow-400 sticky top-0 z-10"
-            >
-                <div
-                    class="max-w-7xl mx-auto flex justify-between items-center p-4"
-                >
-                    <h1
-                        class="text-2xl font-bold text-yellow-400 glitch-effect"
-                    >
-                        GlitchMart
-                    </h1>
-                    <nav class="flex space-x-4">
-                        <Link
-                            :href="route('home')"
-                            class="text-blue-300 hover:text-yellow-400 transition"
-                            >Home</Link
-                        >
-                        <Link
-                            :href="route('about')"
-                            class="text-blue-300 hover:text-yellow-400 transition"
-                            >About</Link
-                        >
-                        <Link
-                            :href="route('contact')"
-                            class="text-blue-300 hover:text-yellow-400 transition"
-                            >Contact</Link
-                        >
-                    </nav>
-                </div>
-            </header>
+        <!-- Hero Section -->
+        <div class="relative overflow-hidden">
+            <!-- Background Pattern -->
+            <div
+                class="absolute inset-0 bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)]"
+            />
 
-            <main class="flex-grow">
-                <!-- Hero Section -->
-                <div class="relative bg-gray-800 py-16 overflow-hidden">
-                    <div
-                        class="absolute inset-0 bg-gradient-to-r from-yellow-400/10 to-blue-300/10"
-                    ></div>
-                    <div class="max-w-7xl mx-auto px-6">
-                        <div class="text-center">
-                            <h1
-                                class="text-5xl font-bold text-yellow-400 glitch-effect mb-6"
-                            >
-                                Welcome to GlitchMart
-                            </h1>
-                            <p class="text-xl text-gray-100 mb-8">
-                                Your Gateway to Digital Excellence
-                            </p>
-                            <Link
-                                :href="route('products.index')"
-                                class="bg-yellow-400 text-black px-8 py-3 rounded-md hover:bg-yellow-300 transition-all duration-300 inline-flex items-center space-x-2"
-                            >
-                                <span>Explore Products</span>
-                                <svg
-                                    class="w-5 h-5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
+            <div class="relative">
+                <div class="container mx-auto px-4 py-24">
+                    <div class="text-center">
+                        <h1
+                            class="text-4xl md:text-6xl font-bold text-primary glitch-text mb-6"
+                        >
+                            Welcome to CyberStore
+                        </h1>
+                        <p class="text-body text-xl mb-8 max-w-2xl mx-auto">
+                            Your one-stop destination for premium digital
+                            products in the cyberpunk universe.
+                        </p>
+                        <div class="flex justify-center gap-4">
+                            <Link :href="route('products.index')">
+                                <Button class="btn-primary text-lg px-8 py-6">
+                                    Explore Products
+                                </Button>
+                            </Link>
+                            <Link :href="route('register')">
+                                <Button
+                                    variant="outline"
+                                    class="text-lg px-8 py-6 border-yellow-400 text-body hover:text-primary"
                                 >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M17 8l4 4m0 0l-4 4m4-4H3"
-                                    />
-                                </svg>
+                                    Get Started
+                                </Button>
                             </Link>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Featured Products Section -->
-                <div class="max-w-7xl mx-auto px-6 py-12">
-                    <h2
-                        class="text-3xl font-bold text-yellow-400 glitch-effect mb-8"
+        <!-- Features Section -->
+        <div class="bg-gray-800/50 py-24">
+            <div class="container mx-auto px-4">
+                <h2
+                    class="text-3xl font-bold text-center text-primary mb-12 glitch-text"
+                >
+                    Why Choose CyberStore?
+                </h2>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div
+                        v-for="feature in features"
+                        :key="feature.title"
+                        class="card-cyberpunk p-6 rounded-lg transform hover:scale-105 transition-transform"
                     >
-                        Featured Products
-                    </h2>
-                    <div class="grid gap-8 lg:grid-cols-3">
                         <div
-                            v-for="product in products"
-                            :key="product.id"
-                            class="bg-gray-800 rounded-lg shadow-lg transition-all duration-300 hover:shadow-[0_0_15px_rgba(250,204,21,0.3)] hover:-translate-y-1"
-                        >
-                            <div class="relative">
-                                <img
-                                    :src="product.image"
-                                    :alt="product.name"
-                                    class="w-full h-56 object-cover rounded-t-lg"
-                                />
-                                <div class="absolute top-3 right-3">
-                                    <span
-                                        class="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-bold"
-                                    >
-                                        ${{ product.price }}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="p-6">
-                                <h3
-                                    class="text-xl font-semibold text-yellow-400 mb-2"
-                                >
-                                    {{ product.name }}
-                                </h3>
-                                <p class="text-gray-100 mb-4">
-                                    {{ product.description }}
-                                </p>
-                                <Link
-                                    :href="`/products/${product.id}`"
-                                    class="w-full bg-yellow-400 text-black rounded-md px-4 py-2 transition duration-300 hover:bg-yellow-300 inline-block text-center"
-                                >
-                                    View Details
-                                </Link>
-                            </div>
-                        </div>
+                            class="w-12 h-12 rounded-full bg-yellow-400/10 flex items-center justify-center mb-4 text-primary"
+                            v-html="feature.icon"
+                        />
+                        <h3 class="text-xl font-bold text-primary mb-2">
+                            {{ feature.title }}
+                        </h3>
+                        <p class="text-body">{{ feature.description }}</p>
                     </div>
                 </div>
-            </main>
+            </div>
+        </div>
 
-            <footer
-                class="bg-gray-800 border-t border-yellow-400 text-center text-sm text-blue-300 py-4"
-            >
-                Laravel v{{ laravelVersion }} (PHP v{{ phpVersion }})
-            </footer>
+        <!-- CTA Section -->
+        <div class="py-24 relative overflow-hidden">
+            <div
+                class="absolute inset-0 bg-yellow-400/5 [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]"
+            />
+            <div class="relative container mx-auto px-4 text-center">
+                <h2 class="text-3xl font-bold text-primary mb-6 glitch-text">
+                    Ready to Join the Future?
+                </h2>
+                <p class="text-body text-xl mb-8 max-w-2xl mx-auto">
+                    Start exploring our collection of digital products and join
+                    the cyberpunk revolution today.
+                </p>
+                <Link :href="route('register')">
+                    <Button class="btn-primary text-lg px-8 py-6">
+                        Create Account
+                    </Button>
+                </Link>
+            </div>
         </div>
     </AppLayout>
 </template>

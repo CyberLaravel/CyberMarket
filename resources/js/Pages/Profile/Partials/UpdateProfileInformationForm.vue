@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { useForm } from "@inertiajs/vue3";
+import { router, useForm } from "@inertiajs/vue3";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
@@ -125,6 +125,7 @@ const deletePhoto = () => {
                             size="sm"
                             @click="deletePhoto"
                             class="bg-red-600 text-white hover:bg-red-500"
+                            type="button"
                         >
                             Remove Photo
                         </Button>

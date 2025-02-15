@@ -37,7 +37,7 @@ const isAuthenticated = computed(() => page.props.auth.user !== null);
         </div>
 
         <!-- Main Content -->
-        <main>
+        <main class="container mx-auto">
             <slot />
         </main>
 

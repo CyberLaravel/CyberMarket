@@ -70,7 +70,7 @@ const handleCheckout = () => {
 
 <template>
     <AppLayout>
-        <template #headerTitle>
+        <template >
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <Button
@@ -86,7 +86,7 @@ const handleCheckout = () => {
             </div>
         </template>
 
-        <template #headerDescription> Complete your purchase </template>
+        <template > Complete your purchase </template>
 
         <div class="py-6 px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -16,19 +16,18 @@ const cart = useCartStore();
 <template>
     <Sheet>
         <SheetTrigger asChild>
-            <Button variant="outline" class="relative">
-                <ShoppingCart class="h-4 w-4" />
+            <Button variant="ghost" class="relative">
+                <ShoppingCart class="h-5 w-5 icon-primary" />
                 <span
-                    v-if="cart.cartCount > 0"
-                    class="absolute -top-2 -right-2 bg-primary text-primary-foreground rounded-full w-5 h-5 text-xs flex items-center justify-center"
+                    class="badge-primary absolute -top-1 -right-1 h-4 w-4 rounded-full text-xs flex items-center justify-center"
                 >
                     {{ cart.cartCount }}
                 </span>
             </Button>
         </SheetTrigger>
-        <SheetContent>
+        <SheetContent class="sheet-content">
             <SheetHeader>
-                <SheetTitle>Shopping Cart</SheetTitle>
+                <SheetTitle class="sheet-title">Shopping Cart</SheetTitle>
             </SheetHeader>
             <div class="mt-4 space-y-4">
                 <div v-if="cart.items.length === 0" class="text-center py-6">

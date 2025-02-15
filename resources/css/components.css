@@ -78,3 +78,89 @@
 .text-muted {
     @apply text-gray-400;
 }
+
+/* Command menu styles */
+.command-base {
+    @apply bg-transparent;
+}
+
+.command-input {
+    @apply form-input border-none px-4 py-2;
+}
+
+.command-list {
+    @apply overflow-auto;
+}
+
+.command-empty {
+    @apply text-muted py-4;
+}
+
+.command-group-heading {
+    @apply text-primary px-2 py-1.5 text-xs font-semibold;
+}
+
+.command-item {
+    @apply text-body hover:text-primary hover:bg-gray-800/50 cursor-pointer px-2 py-1.5;
+}
+
+.command-separator {
+    @apply bg-yellow-400/30 my-1;
+}
+
+/* Dropdown/Popover styles */
+.dropdown-content,
+.popover-content {
+    @apply bg-gray-900 border-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.3)];
+}
+
+.dropdown-label,
+.popover-label {
+    @apply text-body px-2 py-1.5 text-sm;
+}
+
+/* Sheet styles */
+.sheet-content {
+    @apply bg-gray-900 text-body border-yellow-400;
+}
+
+.sheet-header {
+    @apply text-primary;
+}
+
+.sheet-title {
+    @apply text-primary text-lg font-semibold;
+}
+
+/* Avatar styles */
+.avatar-ring {
+    @apply ring-1 ring-yellow-400/30;
+}
+
+.avatar-image {
+    @apply grayscale hover:grayscale-0 transition-all;
+}
+
+.avatar-fallback {
+    @apply bg-gray-800 text-primary;
+}
+
+/* Dropdown styles */
+.dropdown-separator {
+    @apply bg-yellow-400/30;
+}
+
+/* Icon styles */
+.icon-primary {
+    @apply text-primary;
+}
+
+/* Badge styles */
+.badge-primary {
+    @apply bg-primary text-black;
+}
+
+/* Button variants */
+.btn-icon {
+    @apply text-primary hover:text-yellow-300 transition-colors;
+}

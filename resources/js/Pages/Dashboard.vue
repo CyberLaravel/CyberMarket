@@ -51,11 +51,6 @@ const products = ref([
 
 <template>
     <AppLayout title="Dashboard">
-        <template #headerTitle> Product Dashboard </template>
-        <template #headerDescription> Product Dashboard dsecription</template>
-        <template #headerContent> Product Dashboard </template>
-        <template #headerFooter> Product Dashboard </template>
-
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="grid gap-6 lg:grid-cols-3">

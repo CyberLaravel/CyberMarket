@@ -39,12 +39,12 @@ const handleProductDelete = () => {
     <form
         @submit.prevent="handleProductDelete"
         v-if="$page.props.auth.user.id === product.seller.id"
-        class="w-full"
+        class="w-8"
     >
         <Button
             type="submit"
-            variant="destructive"
-            class="w-full flex items-center justify-center gap-2"
+            variant="outline"
+            class="w-full h-8 flex items-center justify-center bg-gray-900 border-yellow-400 hover:bg-gray-800 hover:border-red-400 hover:text-red-400 transition-all duration-300 text-yellow-400 hover:shadow-neon-red"
             :disabled="form.processing"
         >
             <Trash2 class="h-4 w-4" />

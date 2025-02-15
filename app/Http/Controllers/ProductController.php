@@ -9,22 +9,66 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = ProductResource::collection(Product::latest()->paginate(12));
-        return Inertia::render('Products/Index', ['products' => $products]);
+        $query = Product::query()->with('seller:id,name,email');
+
+        // Apply search filter
+        if ($request->has('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                    ->orWhere('description', 'like', '%' . $request->search . '%')
+                    ->orWhereHas('seller', function ($query) use ($request) {
+                        $query->where('name', 'like', '%' . $request->search . '%')
+                            ->orWhere('email', 'like', '%' . $request->search . '%');
+                    });
+            });
+        }
+
+        // Apply category filter
+        if ($request->has('category') && $request->category !== 'all') {
+            $query->where('category', $request->category);
+        }
+
+        // Apply sorting
+        switch ($request->input('sort', 'newest')) {
+            case 'oldest':
+                $query->oldest();
+                break;
+            case 'price_asc':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'price_desc':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'name_asc':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            default:
+                $query->latest();
+        }
+
+        return Inertia::render('Products/Index', [
+            'products' => $query->paginate(10),
+            'filters' => $request->only(['search', 'sort', 'category'])
+        ]);
     }
 
     public function show(Product $product)
     {
         return Inertia::render('Products/Show', [
-            'product' => ProductResource::make($product)
+            'product' => ProductResource::make($product->load(['images', 'seller', 'primaryImage'])),
+            'isSeller' =>  $product->user_id === Auth::id()
         ]);
     }
 
@@ -70,7 +114,7 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         return Inertia::render('Products/Edit', [
-            'product' => $product,
+            'product' => ProductResource::make($product->load(['images', 'seller', 'primaryImage'])),
         ]);
     }
 
@@ -81,14 +125,37 @@ class ProductController extends Controller
     {
         Gate::authorize('update', $product);
 
+        // Update basic product information
         $product->update([
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
-            'image' => $request->image,
         ]);
 
-        return redirect()->route('products.index')->with('success', 'Product updated successfully.');
+        // Handle new image uploads if necessary
+        if ($request->hasFile('images')) {
+            $newImages = [];
+
+            foreach ($request->file('images') as $index => $image) {
+                $path = $image->store('products/' . $product->id, 's3');
+                $newImage = $product->images()->create([
+                    'image_path' => $path
+                ]);
+
+                $newImages[] = $newImage;
+
+                // If this is the selected primary image from new uploads
+                if ($request->new_primary_image_index === $index) {
+                    $product->update([
+                        'primary_image_id' => $newImage->id
+                    ]);
+                }
+            }
+        }
+
+        return redirect()
+            ->route('products.show', $product)
+            ->with('success', 'Product updated successfully.');
     }
 
     /**

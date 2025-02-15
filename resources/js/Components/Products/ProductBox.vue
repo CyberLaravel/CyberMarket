@@ -32,55 +32,57 @@ const getImageUrl = (product) => {
 </script>
 
 <template>
-    <Card class="h-full flex flex-col">
+    <Card
+        class="h-full flex flex-col bg-gray-800 border border-yellow-400 hover:shadow-neon transition-all duration-300"
+    >
         <CardHeader>
             <div
-                class="aspect-square w-full relative rounded-lg overflow-hidden mb-4"
+                class="aspect-square w-full relative rounded-lg overflow-hidden mb-4 border border-yellow-400"
             >
+                <div
+                    v-if="$page.props.auth.user.id === product.seller.id"
+                    class="absolute top-2 right-2 flex gap-2 z-10"
+                >
+                    <ProductButtonEdit :product="product" />
+                    <ProductButtonDelete :product="product" />
+                </div>
+
                 <img
                     :src="getImageUrl(product)"
                     :alt="product.name"
-                    class="object-cover w-full h-full"
+                    class="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
                 />
             </div>
-            <CardTitle class="line-clamp-1">
-                {{ product.name }}
-            </CardTitle>
-            <CardDescription class="line-clamp-2">
-                {{ product.description }}
-            </CardDescription>
+            <div class="space-y-2">
+                <CardTitle
+                    class="line-clamp-1 text-yellow-400 font-orbitron glitch-text"
+                >
+                    {{ product.name }}
+                </CardTitle>
+                <Badge
+                    variant="secondary"
+                    class="bg-gray-900 text-blue-300 border border-yellow-400 font-orbitron hover:bg-gray-800 transition-colors duration-300"
+                >
+                    Sold by {{ product.seller.name }}
+                </Badge>
+                <CardDescription
+                    class="line-clamp-2 text-blue-300 font-orbitron"
+                >
+                    {{ product.description }}
+                </CardDescription>
+            </div>
         </CardHeader>
         <CardContent class="flex-grow">
-            <div class="flex items-center justify-between">
-                <p class="text-2xl font-bold">
+            <div class="flex items-center justify-end">
+                <p class="text-2xl font-bold text-yellow-400 font-orbitron">
                     ${{ parseFloat(product.price).toFixed(2) }}
                 </p>
-                <Badge variant="secondary">
-                    {{ product.seller.name }}
-                </Badge>
             </div>
         </CardContent>
-        <!-- <CardFooter class="grid grid-cols-2 gap-2">
-            <ProductButtonBuy :product="product" />
-            <div
-                class="grid grid-cols-2 gap-2"
-                v-if="$page.props.auth.user.id === product.seller.id"
-            >
-                <ProductButtonEdit :product="product" />
-                <ProductButtonDelete :product="product" />
-            </div>
-        </CardFooter> -->
 
-        <CardFooter class="grid grid-cols-2 gap-2">
+        <CardFooter class="grid grid-cols-2 gap-2 text-gray-100">
             <ProductButtonAddToCart :product="product" />
             <ProductButtonBuy :product="product" />
-            <div
-                class="grid grid-cols-2 gap-2"
-                v-if="$page.props.auth.user.id === product.seller.id"
-            >
-                <ProductButtonEdit :product="product" />
-                <ProductButtonDelete :product="product" />
-            </div>
         </CardFooter>
     </Card>
 </template>
