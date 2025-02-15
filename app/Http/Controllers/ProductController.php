@@ -18,7 +18,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::query()->with('seller:id,name,email');
+        $query = Product::query()->with('seller:id,name,email')->with('primaryImage');
 
         // Apply search filter
         if ($request->has('search')) {
@@ -57,6 +57,7 @@ class ProductController extends Controller
             default:
                 $query->latest();
         }
+
 
         return Inertia::render('Products/Index', [
             'products' => $query->paginate(10),

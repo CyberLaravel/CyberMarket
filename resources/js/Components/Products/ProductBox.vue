@@ -20,11 +20,11 @@ const props = defineProps({
         required: true,
     },
 });
-
+console.log(props.product);
 const getImageUrl = (product) => {
-    if (product.primary_image) {
+    if (product?.primary_image?.image_path) {
         // Remove any leading slashes and combine with bucket path
-        const imagePath = product.primary_image.replace(/^\/+/, "");
+        const imagePath = product.primary_image.image_path.replace(/^\/+/, "");
         return `http://localhost:9000/glitchmart/${imagePath}`;
     }
     return "https://placehold.co/600x600?text=No+Image";
