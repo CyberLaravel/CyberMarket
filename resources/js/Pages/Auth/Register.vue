@@ -1,7 +1,6 @@
 <script setup>
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
-import { Label } from "@/Components/ui/label";
 import { Checkbox } from "@/Components/ui/checkbox";
 import {
     Card,
@@ -19,26 +18,38 @@ import {
     FormLabel,
     FormMessage,
 } from "@/Components/ui/form";
-import { toast } from "@/Components/ui/toast";
+import { useToast } from "@/Components/ui/toast";
 
 import { useForm as inertiaUseForm, Link } from "@inertiajs/vue3";
 import { useForm as veeUseForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
-
 import * as z from "zod";
+import AppLayout from "@/Layouts/AppLayout.vue";
 
-const veeFormFormSchema = toTypedSchema(
-    z.object({
-        name: z.string().min(2).max(50),
-        email: z.string(),
-        password: z.string(),
-        password_confirmation: z.string(),
-        terms: z.boolean(),
-    })
+const veeFormSchema = toTypedSchema(
+    z
+        .object({
+            name: z
+                .string()
+                .min(2, "Name must be at least 2 characters")
+                .max(50),
+            email: z.string().email("Invalid email address"),
+            password: z
+                .string()
+                .min(8, "Password must be at least 8 characters"),
+            password_confirmation: z.string(),
+            terms: z.boolean().refine((val) => val === true, {
+                message: "You must accept the terms and conditions",
+            }),
+        })
+        .refine((data) => data.password === data.password_confirmation, {
+            message: "Passwords don't match",
+            path: ["password_confirmation"],
+        })
 );
 
 const veeForm = veeUseForm({
-    validationSchema: veeFormFormSchema,
+    validationSchema: veeFormSchema,
 });
 
 const inertiaForm = inertiaUseForm({
@@ -49,8 +60,9 @@ const inertiaForm = inertiaUseForm({
     terms: false,
 });
 
+const { toast } = useToast();
+
 const handleRegister = veeForm.handleSubmit(() => {
-    // Set values from veeForm to inertiaForm
     inertiaForm.name = veeForm.values.name;
     inertiaForm.email = veeForm.values.email;
     inertiaForm.password = veeForm.values.password;
@@ -58,12 +70,13 @@ const handleRegister = veeForm.handleSubmit(() => {
     inertiaForm.terms = veeForm.values.terms;
 
     inertiaForm.post(route("register"), {
-        onFinish: () => {
-            inertiaForm.reset("password", "password_confirmation");
+        onSuccess: () => {
+            toast({
+                title: "Registration successful",
+                description: "Your account has been created.",
+            });
         },
-
         onError: (errors) => {
-            // Map the errors to the corresponding fields in the veeForm
             Object.keys(errors).forEach((key) => {
                 veeForm.setFieldError(key, errors[key]);
             });
@@ -73,129 +86,186 @@ const handleRegister = veeForm.handleSubmit(() => {
 </script>
 
 <template>
-    <div class="flex items-center justify-center min-h-screen bg-gray-100">
-        <Card class="w-full max-w-md">
-            <CardHeader>
-                <CardTitle>Register</CardTitle>
-                <CardDescription
-                    >Enter your credentials to create a new
-                    account</CardDescription
-                >
-            </CardHeader>
-            <CardContent>
-                <form @submit="handleRegister" class="space-y-4">
-                    <FormField v-slot="{ componentField }" name="name">
-                        <FormItem>
-                            <FormLabel>Name</FormLabel>
-                            <FormControl>
-                                <Input
-                                    id="name"
-                                    v-bind="componentField"
-                                    type="text"
-                                    placeholder="Joe duo"
-                                />
-                            </FormControl>
-                            <FormDescription>
-                                This is your public display name.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    </FormField>
-
-                    <FormField v-slot="{ componentField }" name="email">
-                        <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                                <Input
-                                    id="email"
-                                    v-bind="componentField"
-                                    type="email"
-                                    placeholder="me@example.com"
-                                />
-                            </FormControl>
-                            <FormDescription>
-                                This is your Email.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    </FormField>
-                    <FormField v-slot="{ componentField }" name="password">
-                        <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                                <Input
-                                    id="password"
-                                    v-bind="componentField"
-                                    type="password"
-                                    placeholder="******"
-                                />
-                            </FormControl>
-                            <FormDescription>
-                                This is your password.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    </FormField>
-                    <FormField
-                        v-slot="{ componentField }"
-                        name="password_confirmation"
-                    >
-                        <FormItem>
-                            <FormLabel>Confirm Password</FormLabel>
-                            <FormControl>
-                                <Input
-                                    id="password_confirmation"
-                                    v-bind="componentField"
-                                    type="password"
-                                    placeholder="******"
-                                />
-                            </FormControl>
-                            <FormDescription>
-                                This is your public display name.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    </FormField>
-
-                    <FormField
-                        v-slot="{ value, handleChange }"
-                        type="checkbox"
-                        name="terms"
-                    >
-                        <FormItem
-                            class="flex flex-row items-start gap-x-3 space-y-0 rounded-md border p-4"
+    <AppLayout>
+        <div class="min-h-screen flex items-center justify-center bg-gray-900">
+            <Card class="w-full max-w-md border-yellow-400 bg-gray-800">
+                <CardHeader class="text-center">
+                    <div class="mx-auto mb-4 size-12 text-yellow-400">
+                        <svg
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
                         >
-                            <FormControl>
-                                <Checkbox
-                                    :checked="value"
-                                    @update:checked="handleChange"
-                                />
-                            </FormControl>
-                            <div class="space-y-1 leading-none">
-                                <FormLabel
-                                    >Accept terms and conditions</FormLabel
-                                >
-                                <FormDescription>
-                                    Accept terms and conditions
-                                </FormDescription>
-                                <FormMessage />
-                            </div>
-                        </FormItem>
-                    </FormField>
-
-                    <Button type="submit" class="w-full">Register</Button>
-                </form>
-            </CardContent>
-            <CardFooter class="flex justify-center">
-                <p class="text-sm text-gray-600">
-                    Already have an account?
-                    <Link
-                        :href="route('login')"
-                        class="text-blue-600 hover:underline"
-                        >Login</Link
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                            />
+                        </svg>
+                    </div>
+                    <CardTitle
+                        class="text-yellow-400 text-2xl font-orbitron glitch-text"
                     >
-                </p>
-            </CardFooter>
-        </Card>
-    </div>
+                        Create an Account
+                    </CardTitle>
+                    <CardDescription class="text-gray-100">
+                        Enter your details to create your account
+                    </CardDescription>
+                </CardHeader>
+
+                <CardContent>
+                    <form @submit.prevent="handleRegister" class="space-y-4">
+                        <FormField v-slot="{ componentField }" name="name">
+                            <FormItem>
+                                <FormLabel class="text-gray-100"
+                                    >Name</FormLabel
+                                >
+                                <FormControl>
+                                    <Input
+                                        class="bg-gray-800 border-yellow-400 text-gray-100 placeholder-gray-500 focus:ring-2 focus:ring-yellow-400"
+                                        id="name"
+                                        v-bind="componentField"
+                                        type="text"
+                                        placeholder="John Doe"
+                                    />
+                                </FormControl>
+                                <FormMessage class="text-yellow-400" />
+                            </FormItem>
+                        </FormField>
+
+                        <FormField v-slot="{ componentField }" name="email">
+                            <FormItem>
+                                <FormLabel class="text-gray-100"
+                                    >Email</FormLabel
+                                >
+                                <FormControl>
+                                    <Input
+                                        class="bg-gray-800 border-yellow-400 text-gray-100 placeholder-gray-500 focus:ring-2 focus:ring-yellow-400"
+                                        id="email"
+                                        v-bind="componentField"
+                                        type="email"
+                                        placeholder="john@example.com"
+                                    />
+                                </FormControl>
+                                <FormMessage class="text-yellow-400" />
+                            </FormItem>
+                        </FormField>
+
+                        <FormField v-slot="{ componentField }" name="password">
+                            <FormItem>
+                                <FormLabel class="text-gray-100"
+                                    >Password</FormLabel
+                                >
+                                <FormControl>
+                                    <Input
+                                        class="bg-gray-800 border-yellow-400 text-gray-100 placeholder-gray-500 focus:ring-2 focus:ring-yellow-400"
+                                        id="password"
+                                        v-bind="componentField"
+                                        type="password"
+                                        placeholder="********"
+                                    />
+                                </FormControl>
+                                <FormMessage class="text-yellow-400" />
+                            </FormItem>
+                        </FormField>
+
+                        <FormField
+                            v-slot="{ componentField }"
+                            name="password_confirmation"
+                        >
+                            <FormItem>
+                                <FormLabel class="text-gray-100"
+                                    >Confirm Password</FormLabel
+                                >
+                                <FormControl>
+                                    <Input
+                                        class="bg-gray-800 border-yellow-400 text-gray-100 placeholder-gray-500 focus:ring-2 focus:ring-yellow-400"
+                                        id="password_confirmation"
+                                        v-bind="componentField"
+                                        type="password"
+                                        placeholder="********"
+                                    />
+                                </FormControl>
+                                <FormMessage class="text-yellow-400" />
+                            </FormItem>
+                        </FormField>
+
+                        <FormField
+                            v-slot="{ value, handleChange }"
+                            name="terms"
+                        >
+                            <FormItem
+                                class="flex flex-row items-start space-x-3 space-y-0 rounded-md border-yellow-400 border bg-gray-800 p-4"
+                            >
+                                <FormControl>
+                                    <Checkbox
+                                        :checked="value"
+                                        @update:checked="handleChange"
+                                    />
+                                </FormControl>
+                                <div class="space-y-1 leading-none">
+                                    <FormLabel class="text-gray-100">
+                                        Accept terms and conditions
+                                    </FormLabel>
+                                    <FormDescription class="text-gray-400">
+                                        By creating an account, you agree to our
+                                        Terms of Service and Privacy Policy.
+                                    </FormDescription>
+                                </div>
+                            </FormItem>
+                        </FormField>
+
+                        <Button
+                            type="submit"
+                            class="w-full bg-yellow-400 text-black hover:bg-yellow-300 transition-colors"
+                        >
+                            Register
+                        </Button>
+                    </form>
+                </CardContent>
+
+                <CardFooter class="text-center">
+                    <p class="text-sm text-gray-100">
+                        Already have an account?
+                        <Link
+                            :href="route('login')"
+                            class="text-blue-300 hover:text-yellow-400 transition-colors"
+                        >
+                            Sign in
+                        </Link>
+                    </p>
+                </CardFooter>
+            </Card>
+        </div>
+    </AppLayout>
 </template>
+
+<style scoped>
+.glitch-text {
+    text-shadow: 0 0 10px rgba(255, 214, 0, 0.8),
+        0 0 20px rgba(255, 214, 0, 0.5), 0 0 30px rgba(255, 214, 0, 0.3);
+    animation: glitch 3s infinite;
+}
+
+@keyframes glitch {
+    0% {
+        transform: translate(0);
+    }
+    20% {
+        transform: translate(-2px, 2px);
+    }
+    40% {
+        transform: translate(-2px, -2px);
+    }
+    60% {
+        transform: translate(2px, 2px);
+    }
+    80% {
+        transform: translate(2px, -2px);
+    }
+    100% {
+        transform: translate(0);
+    }
+}
+</style>

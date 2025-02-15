@@ -55,7 +55,7 @@ class OrderController extends Controller
             'status' => $order->status,
         ]));
 
-        return redirect()->route('orders.index')->with('success', 'Order placed successfully!');
+        return redirect()->route(route: 'orders.index')->with('success', 'Order placed successfully!');
     }
 
     /**

@@ -1,0 +1,80 @@
+/* Glitch text effect */
+.glitch-text {
+    text-shadow: 0 0 10px rgba(255, 214, 0, 0.8),
+        0 0 20px rgba(255, 214, 0, 0.5), 0 0 30px rgba(255, 214, 0, 0.3);
+    animation: glitch 3s infinite;
+}
+
+@keyframes glitch {
+    0% {
+        transform: translate(0);
+    }
+    20% {
+        transform: translate(-2px, 2px);
+    }
+    40% {
+        transform: translate(-2px, -2px);
+    }
+    60% {
+        transform: translate(2px, 2px);
+    }
+    80% {
+        transform: translate(2px, -2px);
+    }
+    100% {
+        transform: translate(0);
+    }
+}
+
+/* Navbar styles */
+.navbar {
+    @apply border-b border-yellow-400 bg-gray-800 shadow-[0_0_10px_rgba(250,204,21,0.3)];
+}
+
+.navbar-inner {
+    @apply flex h-16 items-center px-4 font-['Orbitron'];
+}
+
+.navbar-brand {
+    @apply text-2xl font-bold text-yellow-400 glitch-text mr-6;
+}
+
+.navbar-link {
+    @apply text-gray-100 hover:text-yellow-400 transition-colors;
+}
+
+/* Form input styles */
+.form-input {
+    @apply bg-gray-800 border-yellow-400 text-gray-100 placeholder-gray-500 focus:ring-2 focus:ring-yellow-400;
+}
+
+/* Button styles */
+.btn-primary {
+    @apply bg-yellow-400 text-black hover:bg-yellow-300 transition-colors;
+}
+
+.btn-ghost {
+    @apply text-gray-100 hover:text-yellow-400 transition-colors;
+}
+
+/* Card styles */
+.card-cyberpunk {
+    @apply border-yellow-400 bg-gray-800;
+}
+
+/* Text styles */
+.text-primary {
+    @apply text-yellow-400;
+}
+
+.text-secondary {
+    @apply text-blue-300;
+}
+
+.text-body {
+    @apply text-gray-100;
+}
+
+.text-muted {
+    @apply text-gray-400;
+}

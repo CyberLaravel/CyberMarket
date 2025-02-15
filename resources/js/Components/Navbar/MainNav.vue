@@ -1,7 +1,5 @@
 <script setup>
-import { cn } from "@/lib/utils";
 import { Link } from "@inertiajs/vue3";
-
 const navLinks = [
     { route: "dashboard", label: "Overview" },
     {
@@ -23,23 +21,19 @@ const navLinks = [
 </script>
 
 <template>
-    <nav
-        :class="
-            cn('flex items-center space-x-4 lg:space-x-6', $attrs.class ?? '')
-        "
-    >
+    <nav class="flex items-center space-x-6">
         <Link
-            v-for="link in navLinks"
-            :key="link.label"
-            :href="route(link.route)"
-            :class="
-                cn(
-                    'text-sm font-medium transition-colors hover:text-primary',
-                    link.class
-                )
-            "
+            v-for="item in navLinks"
+            :key="item.route"
+            :href="route(item.route)"
+            :class="[
+                'navbar-link relative group',
+                $page.url.startsWith(item.route)
+                    ? 'text-primary after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-yellow-400 after:shadow-[0_0_10px_rgba(250,204,21,0.5)]'
+                    : '',
+            ]"
         >
-            {{ link.label }}
+            {{ item.label }}
         </Link>
     </nav>
 </template>

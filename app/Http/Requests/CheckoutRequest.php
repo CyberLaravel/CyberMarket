@@ -14,20 +14,21 @@ class CheckoutRequest extends FormRequest
     public function rules()
     {
         return [
-            'shipping_details.full_name' => 'required|string|max:255',
-            'shipping_details.email' => 'required|email|max:255',
-            'shipping_details.phone' => 'required|string|max:20',
-            'shipping_details.address' => 'required|string|max:255',
-            'shipping_details.city' => 'required|string|max:255',
-            'shipping_details.state' => 'required|string|max:255',
-            'shipping_details.postal_code' => 'required|string|max:20',
-            'shipping_details.country' => 'required|string|max:255',
-            'cart_items' => 'required|array|min:1',
-            'cart_items.*.id' => 'required|exists:products,id',
-            'cart_items.*.quantity' => 'required|integer|min:1',
-            'subtotal' => 'required|numeric|min:0',
-            'tax' => 'required|numeric|min:0',
-            'total' => 'required|numeric|min:0',
+            'items' => ['required', 'array'],
+            'items.*.id' => ['required', 'exists:products,id'],
+            'items.*.quantity' => ['required', 'integer', 'min:1'],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'items.required' => 'Cart items are required',
+            'items.*.id.required' => 'Product ID is required',
+            'items.*.id.exists' => 'Invalid product selected',
+            'items.*.quantity.required' => 'Product quantity is required',
+            'items.*.quantity.integer' => 'Quantity must be a number',
+            'items.*.quantity.min' => 'Quantity must be at least 1',
         ];
     }
 }

@@ -122,4 +122,82 @@ class CheckoutController extends Controller
             Log::error('Failed to send order confirmation email: ' . $e->getMessage());
         }
     }
+
+    public function store(CheckoutRequest $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Create the order
+            $order = Order::create([
+                'user_id' => Auth::id(),
+                'status' => 'pending',
+                'subtotal' => 0,
+                'tax' => 0,
+                'total' => 0,
+            ]);
+
+            $subtotal = 0;
+
+            // Process each item and create order items
+            foreach ($request->items as $item) {
+                $product = Product::findOrFail($item['id']);
+
+                // Check stock availability
+                if (!$product->isAvailable() || $product->stock < $item['quantity']) {
+                    throw new \Exception("Product {$product->name} is no longer available or has insufficient stock.");
+                }
+
+                // Create order item
+                $itemTotal = $product->price * $item['quantity'];
+                $order->items()->create([
+                    'product_id' => $product->id,
+                    'quantity' => $item['quantity'],
+                    'price' => $product->price,
+                    'total' => $itemTotal
+                ]);
+
+                // Update product stock
+                $product->decrement('stock', $item['quantity']);
+
+                $subtotal += $itemTotal;
+            }
+
+            // Calculate totals
+            $tax = $subtotal * 0.10; // 10% tax rate - adjust as needed
+            $total = $subtotal + $tax;
+
+            // Update order with totals
+            $order->update([
+                'subtotal' => $subtotal,
+                'tax' => $tax,
+                'total' => $total
+            ]);
+
+            // Process payment
+            $paymentSuccessful = $this->processPayment($order);
+
+            if (!$paymentSuccessful) {
+                throw new \Exception('Payment processing failed.');
+            }
+
+            // Update order status
+            $order->update(['status' => 'paid']);
+
+            DB::commit();
+
+            // Send order confirmation email
+            $this->sendOrderConfirmation($order);
+
+            return redirect()->route('orders.show', ['order' => $order->id])
+                ->with('success', 'Order placed successfully!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Checkout failed: ' . $e->getMessage());
+
+            return redirect()->back()
+                ->with('error', 'Failed to process order: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
 }

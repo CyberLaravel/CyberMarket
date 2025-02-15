@@ -36,19 +36,34 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        Gate::authorize('create', Product::class);
-
-        Product::create([
+        // Create the product
+        $product = Product::create([
             'user_id' => Auth::id(),
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
-            'image' => $request->image,
         ]);
 
-        return redirect()->route('products.index');
+        // Handle image uploads if necessary
+        if ($request->hasFile('images')) {
+            $firstImage = true;
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('products/' . $product->id, 's3');
+                $product->images()->create([
+                    'image_path' => $path
+                ]);
+
+                // Set the first image as primary
+                if ($firstImage) {
+                    $product->update(['primary_image' => $path]);
+                    $firstImage = false;
+                }
+            }
+        }
+
+        return redirect()->route('products.index')->with('success', 'Product created successfully!');
     }
 
 

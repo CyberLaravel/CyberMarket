@@ -20,6 +20,15 @@ const props = defineProps({
         required: true,
     },
 });
+
+const getImageUrl = (product) => {
+    if (product.primary_image) {
+        // Remove any leading slashes and combine with bucket path
+        const imagePath = product.primary_image.replace(/^\/+/, "");
+        return `http://localhost:9000/glitchmart/${imagePath}`;
+    }
+    return "https://placehold.co/600x600?text=No+Image";
+};
 </script>
 
 <template>
@@ -29,13 +38,9 @@ const props = defineProps({
                 class="aspect-square w-full relative rounded-lg overflow-hidden mb-4"
             >
                 <img
-                    :src="product.image"
+                    :src="getImageUrl(product)"
                     :alt="product.name"
                     class="object-cover w-full h-full"
-                    @error="
-                        $event.target.src =
-                            'https://placehold.co/600x600?text=No+Image'
-                    "
                 />
             </div>
             <CardTitle class="line-clamp-1">

@@ -1,23 +1,14 @@
-<script setup lang="ts">
-import MainNav from "./MainNav.vue";
-import Search from "./Search.vue";
-import TeamSwitcher from "./TeamSwitcher.vue";
-import UserNav from "./UserNav.vue";
-import CartButton from "@/Components/Cart/CartButton.vue";
+<script setup>
+import { usePage } from "@inertiajs/vue3";
+import { computed } from "vue";
+import AuthNav from "./AuthNav.vue";
+import GuestNav from "./GuestNav.vue";
 
-defineProps(["teams"]);
+const page = usePage();
+const isAuthenticated = computed(() => page.props.auth.user !== null);
 </script>
 
 <template>
-    <div class="border-b">
-        <div class="flex h-16 items-center px-4">
-            <TeamSwitcher :teams="teams" />
-            <MainNav class="mx-6" />
-            <div class="ml-auto flex items-center space-x-4">
-                <Search />
-                <UserNav />
-                <CartButton />
-            </div>
-        </div>
-    </div>
+    <AuthNav v-if="isAuthenticated" />
+    <GuestNav v-else />
 </template>

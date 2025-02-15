@@ -1,7 +1,7 @@
 <script setup>
+import { computed } from "vue";
 import { Button } from "@/Components/ui/button";
-import { Input } from "@/Components/ui/input";
-import { Label } from "@/Components/ui/label";
+import { Link, useForm } from "@inertiajs/vue3";
 import {
     Card,
     CardContent,
@@ -10,103 +10,108 @@ import {
     CardHeader,
     CardTitle,
 } from "@/Components/ui/card";
-import { toast } from "@/Components/ui/toast";
 
-import { useForm, Link, router } from "@inertiajs/vue3";
-import DropdownMenuItem from "@/Components/ui/dropdown-menu/DropdownMenuItem.vue";
-
-const props = defineProps({
+defineProps({
     status: String,
 });
 
 const form = useForm({});
 
-const handleResendVerification = () => {
-    // Handle resend verification email logic here
-    console.log("Resend verification email attempt");
+const submit = () => {
     form.post(route("verification.send"));
 };
 
-const logout = () => {
-    router.post(route("logout"));
-};
+const verificationLinkSent = computed(
+    () => status === "verification-link-sent"
+);
 </script>
 
 <template>
-    <div class="min-h-screen flex items-center justify-center bg-gray-100">
-        <div class="w-full max-w-md">
-            <Card class="bg-white shadow-2xl rounded-lg overflow-hidden">
-                <CardHeader class="p-8">
-                    <div class="text-center mb-8">
-                        <svg
-                            class="mx-auto h-12 w-auto text-indigo-600"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
+    <div class="min-h-screen flex items-center justify-center bg-gray-900">
+        <Card class="w-full max-w-md border-yellow-400 bg-gray-800">
+            <CardHeader class="text-center">
+                <div class="mx-auto mb-4 size-12 text-yellow-400">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                    </svg>
+                </div>
+                <CardTitle
+                    class="text-yellow-400 text-2xl font-orbitron glitch-text"
+                >
+                    Email Verification
+                </CardTitle>
+                <CardDescription class="text-gray-100">
+                    Thanks for signing up! Before getting started, could you
+                    verify your email address by clicking on the link we just
+                    emailed to you? If you didn't receive the email, we will
+                    gladly send you another.
+                </CardDescription>
+            </CardHeader>
+
+            <CardContent>
+                <div
+                    v-if="verificationLinkSent"
+                    class="mb-4 text-sm font-medium text-yellow-400"
+                >
+                    A new verification link has been sent to the email address
+                    you provided during registration.
+                </div>
+
+                <form @submit.prevent="submit">
+                    <div class="flex items-center justify-between">
+                        <Button
+                            type="submit"
+                            :disabled="form.processing"
+                            class="bg-yellow-400 text-black hover:bg-yellow-300 transition-colors"
                         >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                            />
-                        </svg>
-                        <h2 class="mt-4 text-3xl font-semibold text-gray-900">
-                            Verify Your Email
-                        </h2>
-                        <p class="mt-2 text-gray-600">
-                            We've sent a verification link to your email
-                        </p>
-                    </div>
-                </CardHeader>
-
-                <CardContent>
-                    <div class="text-center">
-                        <p class="text-sm text-gray-600 mb-4">
-                            Please check your email and click on the
-                            verification link to complete your registration.
-                        </p>
-                        <p class="text-sm text-gray-600">
-                            If you haven't received the email, please check your
-                            spam folder or use the form below to resend the
-                            verification email.
-                        </p>
-                    </div>
-
-                    <form
-                        @submit.prevent="handleResendVerification"
-                        class="mt-6"
-                    >
-                        <Button class="w-full">
                             Resend Verification Email
                         </Button>
-                    </form>
 
-                    <div class="mt-6 flex space-x-4">
-                        <Link :href="route('profile.show')" class="w-full">
-                            <Button class="w-full" variant="secondary">
-                                Edit Profile
-                            </Button>
+                        <Link
+                            :href="route('logout')"
+                            method="post"
+                            as="button"
+                            class="text-blue-300 hover:text-yellow-400 transition-colors"
+                        >
+                            Log Out
                         </Link>
-                        <form @submit.prevent="logout" class="w-full">
-                            <Button class="w-full" variant="secondary">
-                                Logout
-                            </Button>
-                        </form>
                     </div>
-                </CardContent>
-
-                <CardFooter
-                    class="px-8 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-center"
-                >
-                    <span class="text-sm text-gray-600">Already verified?</span>
-                    <Link
-                        :href="route('login')"
-                        class="ml-1 text-sm font-medium text-indigo-600 hover:text-indigo-500"
-                        >Return to login</Link
-                    >
-                </CardFooter>
-            </Card>
-        </div>
+                </form>
+            </CardContent>
+        </Card>
     </div>
 </template>
+
+<style scoped>
+.glitch-text {
+    text-shadow: 0 0 10px rgba(255, 214, 0, 0.8),
+        0 0 20px rgba(255, 214, 0, 0.5), 0 0 30px rgba(255, 214, 0, 0.3);
+    animation: glitch 3s infinite;
+}
+
+@keyframes glitch {
+    0% {
+        transform: translate(0);
+    }
+    20% {
+        transform: translate(-2px, 2px);
+    }
+    40% {
+        transform: translate(-2px, -2px);
+    }
+    60% {
+        transform: translate(2px, 2px);
+    }
+    80% {
+        transform: translate(2px, -2px);
+    }
+    100% {
+        transform: translate(0);
+    }
+}
+</style>

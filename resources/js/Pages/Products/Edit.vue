@@ -14,15 +14,34 @@ const props = defineProps({
     },
 });
 
+const HOST = import.meta.env.VITE_STORAGE_HOST || "http://localhost:9000";
+const BUCKET = import.meta.env.VITE_STORAGE_BUCKET || "glitchmart";
+
+const getImageUrl = (imagePath) => {
+    if (imagePath) {
+        const cleanPath = imagePath.replace(/^\/+/, "");
+        return `${HOST}/${BUCKET}/${cleanPath}`;
+    }
+    return "https://placehold.co/600x600?text=No+Image";
+};
+
 const form = useForm({
     name: props.product.name,
     description: props.product.description,
     price: props.product.price,
-    image: props.product.image,
+    primary_image: null,
 });
 
+const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        form.primary_image = file;
+    }
+};
+
 const submit = () => {
-    form.put(`/products/${props.product.id}`, {
+    form.post(`/products/${props.product.id}`, {
+        _method: "PUT",
         onSuccess: () => {
             toast({
                 title: "Success",
@@ -92,18 +111,26 @@ const submit = () => {
                 </div>
 
                 <div class="space-y-2">
-                    <Label for="image">Image URL</Label>
-                    <Input
-                        id="image"
-                        v-model="form.image"
-                        placeholder="Enter image URL"
-                        :error="form.errors.image"
-                    />
+                    <Label for="primary_image">Product Image</Label>
+                    <div class="flex items-center gap-4">
+                        <img
+                            :src="getImageUrl(product.primary_image)"
+                            alt="Product image"
+                            class="w-24 h-24 object-cover rounded-lg"
+                        />
+                        <Input
+                            id="primary_image"
+                            type="file"
+                            accept="image/*"
+                            @input="handleImageUpload"
+                            :error="form.errors.primary_image"
+                        />
+                    </div>
                     <span
-                        v-if="form.errors.image"
+                        v-if="form.errors.primary_image"
                         class="text-sm text-destructive"
                     >
-                        {{ form.errors.image }}
+                        {{ form.errors.primary_image }}
                     </span>
                 </div>
 

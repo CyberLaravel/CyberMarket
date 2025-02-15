@@ -11,7 +11,11 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
-import { Link, router } from "@inertiajs/vue3";
+import { Link, router, usePage } from "@inertiajs/vue3";
+import { computed } from "vue";
+
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 
 const menuItems = [
     { route: "profile.show", label: "Profile", shortcut: "⇧⌘P" },
@@ -21,7 +25,6 @@ const menuItems = [
 ];
 
 const logout = () => {
-    console.log("loggggging out");
     router.post(route("logout"));
 };
 </script>
@@ -30,45 +33,55 @@ const logout = () => {
     <DropdownMenu>
         <DropdownMenuTrigger as-child>
             <Button variant="ghost" class="relative h-8 w-8 rounded-full">
-                <Avatar class="h-8 w-8">
-                    <AvatarImage src="/avatars/01.png" alt="@shadcn" />
-                    <AvatarFallback>SC</AvatarFallback>
+                <Avatar class="h-8 w-8 ring-1 ring-yellow-400/30">
+                    <AvatarImage
+                        :src="`https://avatar.vercel.sh/${user.id}.png`"
+                        :alt="user.name"
+                        class="grayscale hover:grayscale-0 transition-all"
+                    />
+                    <AvatarFallback class="bg-gray-800 text-primary">
+                        {{ user.name.charAt(0) }}
+                    </AvatarFallback>
                 </Avatar>
             </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent class="w-56" align="end">
-            <DropdownMenuLabel class="font-normal flex">
+        <DropdownMenuContent class="w-56 card-cyberpunk" align="end">
+            <DropdownMenuLabel class="font-normal">
                 <div class="flex flex-col space-y-1">
-                    <p class="text-sm font-medium leading-none">Joe doe</p>
-                    <p class="text-xs leading-none text-muted-foreground">
-                        m@example.com
+                    <p class="text-sm font-medium leading-none text-body">
+                        {{ user.name }}
+                    </p>
+                    <p class="text-xs leading-none text-muted">
+                        {{ user.email }}
                     </p>
                 </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator class="bg-yellow-400/30" />
             <DropdownMenuGroup>
                 <Link
                     :href="route(item.route)"
                     v-for="item in menuItems"
                     :key="item.label"
                 >
-                    <DropdownMenuItem class="cursor-pointer">
+                    <DropdownMenuItem
+                        class="cursor-pointer text-body hover:text-primary hover:bg-gray-800"
+                    >
                         {{ item.label }}
-                        <DropdownMenuShortcut v-if="item.shortcut">{{
-                            item.shortcut
-                        }}</DropdownMenuShortcut>
+                        <DropdownMenuShortcut
+                            v-if="item.shortcut"
+                            class="text-muted"
+                        >
+                            {{ item.shortcut }}
+                        </DropdownMenuShortcut>
                     </DropdownMenuItem>
                 </Link>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator class="bg-yellow-400/30" />
             <DropdownMenuGroup>
                 <form @submit.prevent="logout">
-                    <Button class="cursor-pointer w-full" variant="secondary">
-                        Logout
-                    </Button>
+                    <Button class="w-full btn-primary"> Logout </Button>
                 </form>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
         </DropdownMenuContent>
     </DropdownMenu>
 </template>

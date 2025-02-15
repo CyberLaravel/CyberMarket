@@ -36,6 +36,10 @@ Route::get('/contact', function () {
     return Inertia::render('Contact');
 })->name('contact');
 
+Route::get('/test', function () {
+    return Inertia::render('Test');
+})->name('test');
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -52,6 +56,8 @@ Route::middleware([
 
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+    Route::post('/checkout', [CheckoutController::class, 'store'])
+        ->name('checkout.store');
 });
 
 // Define a common middleware group

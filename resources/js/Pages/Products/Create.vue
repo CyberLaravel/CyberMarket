@@ -12,12 +12,14 @@ const form = useForm({
     name: "",
     description: "",
     price: "",
+    images: [],
 });
 
 const submit = () => {
     form.post("/products", {
         onSuccess: () => {
             form.reset();
+            form.images = [];
             toast({
                 title: "Success",
                 description: "Product has been added successfully",
@@ -33,9 +35,29 @@ const submit = () => {
         preserveScroll: true,
     });
 };
+
+const handleFileChange = (event) => {
+    const files = Array.from(event.target.files);
+    form.images.push(...files);
+};
+
+const handleDrop = (event) => {
+    event.preventDefault();
+    const files = Array.from(event.dataTransfer.files);
+    form.images.push(...files);
+};
+
+const handleDragOver = (event) => {
+    event.preventDefault();
+};
+
+const triggerFileInput = () => {
+    document.getElementById("images").click();
+};
 </script>
 
 <template>
+    {{ form }}
     <AppLayout title="Create Product">
         <!-- Header Content -->
         <template #headerTitle> Create New Product </template>
@@ -101,6 +123,46 @@ const submit = () => {
                     >
                         {{ form.errors.description }}
                     </span>
+                </div>
+
+                <div class="space-y-2">
+                    <Label for="images">Product Images</Label>
+                    <div
+                        class="border-dashed border-2 border-gray-300 p-4 text-center cursor-pointer"
+                        @drop="handleDrop"
+                        @dragover="handleDragOver"
+                        @click="triggerFileInput"
+                    >
+                        <p>
+                            Drag and drop images here or click to select files
+                        </p>
+                        <Input
+                            id="images"
+                            type="file"
+                            @change="handleFileChange"
+                            accept="image/*"
+                            multiple
+                            class="hidden"
+                        />
+                    </div>
+                    <span
+                        v-if="form.errors.images"
+                        class="text-sm text-destructive"
+                    >
+                        {{ form.errors.images }}
+                    </span>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                        <div
+                            v-for="(image, index) in form.images"
+                            :key="index"
+                            class="relative"
+                        >
+                            <img
+                                :src="URL.createObjectURL(image)"
+                                class="w-full h-auto rounded"
+                            />
+                        </div>
+                    </div>
                 </div>
 
                 <div class="flex justify-end">
