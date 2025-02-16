@@ -2,19 +2,17 @@
 import { ref, computed } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { Input } from "@/Components/ui/input";
-import { Label } from "@/Components/ui/label";
-import { Textarea } from "@/Components/ui/textarea";
-import { Button } from "@/Components/ui/button";
+
 import { toast } from "@/Components/ui/toast";
 import { XMarkIcon } from "@heroicons/vue/24/solid";
-import {
-    Select,
-    SelectTrigger,
-    SelectValue,
-    SelectContent,
-    SelectItem,
-} from "@/Components/ui/select";
+import CustomSelect from "@/Components/ui/custom-select/CustomSelect.vue";
+import CustomOption from "@/Components/ui/custom-select/CustomOption.vue";
+import CustomInput from "@/Components/ui/custom-input/CustomInput.vue";
+import CustomLabel from "@/Components/ui/custom-label/CustomLabel.vue";
+import CustomTextarea from "@/Components/ui/custom-textarea/CustomTextarea.vue";
+import CustomButton from "@/Components/ui/custom-button/CustomButton.vue";
+import DragDropZone from "@/Components/ui/drag-drop-zone/DragDropZone.vue";
+import ImagePreview from "@/Components/ui/image-preview/ImagePreview.vue";
 
 const props = defineProps({
     categories: Array,
@@ -28,8 +26,6 @@ const form = useForm({
     primary_image_index: 0,
     category_id: "",
 });
-
-const isDragging = ref(false);
 
 const submit = () => {
     form.post("/products", {
@@ -52,34 +48,6 @@ const submit = () => {
     });
 };
 
-const handleFileChange = (event) => {
-    const files = Array.from(event.target.files);
-    form.images.push(...files);
-};
-
-const handleDragOver = (event) => {
-    event.preventDefault();
-    isDragging.value = true;
-};
-
-const handleDragLeave = (event) => {
-    event.preventDefault();
-    if (event.target.classList.contains("dropzone")) {
-        isDragging.value = false;
-    }
-};
-
-const handleDrop = (event) => {
-    event.preventDefault();
-    isDragging.value = false;
-    const files = Array.from(event.dataTransfer.files);
-    form.images.push(...files);
-};
-
-const triggerFileInput = () => {
-    document.getElementById("images").click();
-};
-
 const previewImages = computed(() => {
     const images = form.images.map((image, index) => ({
         id: URL.createObjectURL(image),
@@ -93,10 +61,6 @@ const previewImages = computed(() => {
         return a.index - b.index;
     });
 });
-
-const setPrimaryImage = (index) => {
-    form.primary_image_index = index;
-};
 
 const removeImage = (index) => {
     form.images.splice(index, 1);
@@ -130,34 +94,19 @@ const removeImage = (index) => {
                 >
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
-                            <Label
-                                for="name"
-                                class="text-yellow-400 font-orbitron"
-                                >Product Name</Label
-                            >
-                            <Input
+                            <CustomLabel for="name">Product Name</CustomLabel>
+                            <CustomInput
                                 id="name"
                                 v-model="form.name"
                                 placeholder="Enter product name"
                                 :error="form.errors.name"
                                 required
-                                class="bg-gray-800 border-yellow-400 text-gray-100 placeholder-gray-500 focus:ring-2 focus:ring-yellow-400"
                             />
-                            <span
-                                v-if="form.errors.name"
-                                class="text-red-400 text-sm"
-                            >
-                                {{ form.errors.name }}
-                            </span>
                         </div>
 
                         <div class="space-y-2">
-                            <Label
-                                for="price"
-                                class="text-yellow-400 font-orbitron"
-                                >Price</Label
-                            >
-                            <Input
+                            <CustomLabel for="price">Price</CustomLabel>
+                            <CustomInput
                                 id="price"
                                 v-model="form.price"
                                 type="number"
@@ -166,258 +115,75 @@ const removeImage = (index) => {
                                 placeholder="Enter price"
                                 :error="form.errors.price"
                                 required
-                                class="bg-gray-800 border-yellow-400 text-gray-100 placeholder-gray-500 focus:ring-2 focus:ring-yellow-400"
                             />
-                            <span
-                                v-if="form.errors.price"
-                                class="text-red-400 text-sm"
-                            >
-                                {{ form.errors.price }}
-                            </span>
                         </div>
                     </div>
 
                     <div class="space-y-2 mt-6">
-                        <Label
-                            for="description"
-                            class="text-yellow-400 font-orbitron"
-                            >Description</Label
-                        >
-                        <Textarea
+                        <CustomLabel for="description">Description</CustomLabel>
+                        <CustomTextarea
                             id="description"
                             v-model="form.description"
                             placeholder="Enter product description"
                             :error="form.errors.description"
                             required
                             rows="4"
-                            class="bg-gray-800 border-yellow-400 text-gray-100 placeholder-gray-500 focus:ring-2 focus:ring-yellow-400 w-full"
                         />
-                        <span
-                            v-if="form.errors.description"
-                            class="text-red-400 text-sm"
-                        >
-                            {{ form.errors.description }}
-                        </span>
                     </div>
 
                     <div class="space-y-2 mt-6">
-                        <Label
-                            for="category_id"
-                            class="text-yellow-400 font-orbitron"
-                            >Category</Label
-                        >
-                        <Select
+                        <CustomSelect
                             v-model="form.category_id"
+                            label="Category"
+                            placeholder="Select Category"
                             :error="form.errors.category_id"
                         >
-                            <SelectTrigger
-                                class="bg-gray-800 border-yellow-400 text-gray-100"
+                            <CustomOption
+                                v-for="category in categories"
+                                :key="category.id"
+                                :value="category.id"
                             >
-                                <SelectValue placeholder="Select Category" />
-                            </SelectTrigger>
-                            <SelectContent
-                                class="bg-gray-800 border-yellow-400 text-gray-100 shadow-neon"
-                            >
-                                <SelectItem
-                                    v-for="category in categories"
-                                    :key="category.id"
-                                    :value="category.id"
-                                    class="hover:bg-gray-700 hover:text-yellow-400 focus:bg-gray-700 focus:text-yellow-400"
-                                >
-                                    {{ category.name }}
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
+                                {{ category.name }}
+                            </CustomOption>
+                        </CustomSelect>
                     </div>
 
                     <div class="space-y-2 mt-6">
-                        <Label
-                            for="images"
-                            class="text-yellow-400 font-orbitron"
-                            >Product Images</Label
-                        >
-                        <div
-                            class="dropzone border-2 border-dashed border-yellow-400 p-6 rounded-lg bg-gray-800 text-center cursor-pointer transition-all duration-300 group"
-                            :class="{
-                                'border-blue-300 bg-gray-700 shadow-[0_0_15px_rgba(147,197,253,0.3)]':
-                                    isDragging,
-                            }"
-                            @drop="handleDrop"
-                            @dragover="handleDragOver"
-                            @dragleave="handleDragLeave"
-                            @click="triggerFileInput"
-                        >
-                            <div class="space-y-2">
-                                <div class="flex justify-center">
-                                    <svg
-                                        class="w-12 h-12"
-                                        :class="
-                                            isDragging
-                                                ? 'text-blue-300'
-                                                : 'text-yellow-400 group-hover:text-yellow-300'
-                                        "
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                                        />
-                                    </svg>
-                                </div>
-                                <p
-                                    :class="
-                                        isDragging
-                                            ? 'text-blue-300'
-                                            : 'text-blue-300 group-hover:text-blue-200'
-                                    "
-                                >
-                                    {{
-                                        isDragging
-                                            ? "Drop files here"
-                                            : "Drag and drop images here or click to select files"
-                                    }}
-                                </p>
-                                <p class="text-gray-500 text-sm">
-                                    Supported formats: JPG, PNG, GIF
-                                </p>
-                            </div>
-                            <Input
-                                id="images"
-                                type="file"
-                                @change="handleFileChange"
-                                accept="image/*"
-                                multiple
-                                class="hidden"
-                            />
-                        </div>
+                        <CustomLabel for="images">Product Images</CustomLabel>
+                        <DragDropZone
+                            @filesSelected="
+                                (files) => form.images.push(...files)
+                            "
+                            accept="image/*"
+                            multiple
+                            supportedFormats="JPG, PNG, GIF"
+                        />
+                    </div>
 
-                        <div
-                            class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mt-4"
-                        >
-                            <div
-                                v-for="(image, displayIndex) in previewImages"
-                                :key="image.id"
-                                class="relative group border-2 rounded-lg overflow-hidden aspect-square transition-all duration-300"
-                                :class="[
-                                    image.index === form.primary_image_index
-                                        ? 'border-blue-300 shadow-[0_0_15px_rgba(147,197,253,0.3)] scale-[1.02]'
-                                        : 'border-yellow-400 hover:border-yellow-300',
-                                ]"
-                            >
-                                <img
-                                    :src="image.id"
-                                    class="w-full h-full object-cover"
-                                    :class="{
-                                        'scale-105 transition-transform duration-500':
-                                            image.index ===
-                                            form.primary_image_index,
-                                    }"
-                                />
-                                <div
-                                    class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300"
-                                >
-                                    <div
-                                        class="absolute top-2 right-2 flex gap-2 transform translate-y-[-10px] opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300"
-                                    >
-                                        <button
-                                            v-if="
-                                                image.index !==
-                                                form.primary_image_index
-                                            "
-                                            @click.prevent="
-                                                setPrimaryImage(image.index)
-                                            "
-                                            class="p-1.5 rounded-full bg-blue-500/90 text-white hover:bg-blue-400 hover:shadow-[0_0_10px_rgba(147,197,253,0.5)] transition-all duration-300"
-                                            title="Set as primary image"
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                class="w-4 h-4"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                stroke-width="2"
-                                            >
-                                                <path d="M5 12l5 5l10 -10" />
-                                            </svg>
-                                        </button>
-                                        <button
-                                            @click.prevent="
-                                                removeImage(image.index)
-                                            "
-                                            class="p-1.5 rounded-full bg-red-500/90 text-white hover:bg-red-400 hover:shadow-[0_0_10px_rgba(239,68,68,0.5)] transition-all duration-300"
-                                            title="Remove image"
-                                        >
-                                            <XMarkIcon class="w-4 h-4" />
-                                        </button>
-                                    </div>
-
-                                    <div
-                                        v-if="
-                                            image.index ===
-                                            form.primary_image_index
-                                        "
-                                        class="absolute bottom-0 inset-x-0 p-2"
-                                    >
-                                        <div
-                                            class="flex items-center justify-center gap-1.5 text-blue-300"
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                class="w-4 h-4"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                stroke-width="2"
-                                            >
-                                                <path
-                                                    d="M5 8.5L12 15.5L19 8.5"
-                                                />
-                                            </svg>
-                                            <span
-                                                class="text-xs font-medium tracking-wider uppercase"
-                                            >
-                                                Primary
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div
-                                    v-if="
-                                        image.index === form.primary_image_index
-                                    "
-                                    class="absolute inset-0 bg-blue-300/10 pointer-events-none"
-                                ></div>
-                            </div>
-                        </div>
+                    <div class="mt-4">
+                        <ImagePreview
+                            v-if="previewImages.length"
+                            :images="previewImages"
+                            v-model:primaryIndex="form.primary_image_index"
+                            @removeImage="removeImage"
+                        />
                     </div>
 
                     <div class="flex justify-end mt-8 space-x-4">
-                        <Button
-                            type="button"
+                        <CustomButton
                             @click="$inertia.get('/products')"
-                            class="bg-gray-800 hover:bg-gray-700 text-gray-100 font-bold py-2 px-6 rounded-lg border border-gray-600 transition-all duration-300"
+                            variant="secondary"
                         >
                             Cancel
-                        </Button>
-                        <Button
+                        </CustomButton>
+                        <CustomButton
                             type="submit"
                             :disabled="form.processing"
-                            class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-6 rounded-lg border border-yellow-400 hover:shadow-[0_0_15px_rgba(250,204,21,0.5)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                            :processing="form.processing"
+                            variant="primary"
                         >
-                            <span
-                                v-if="form.processing"
-                                class="inline-block animate-pulse"
-                            >
-                                Processing...
-                            </span>
-                            <span v-else>Add Product</span>
-                        </Button>
+                            Add Product
+                        </CustomButton>
                     </div>
                 </div>
             </form>
