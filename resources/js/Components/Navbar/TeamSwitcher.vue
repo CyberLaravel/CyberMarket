@@ -27,7 +27,7 @@ import { Settings } from "lucide-vue-next";
 
 const page = usePage();
 const selectedTeam = ref(page.props.auth.user.current_team);
-
+console.log(page.props.auth.user);
 const props = defineProps({
     teams: Array,
 });

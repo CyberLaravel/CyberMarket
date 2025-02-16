@@ -13,19 +13,18 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::factory(5)->create();
-        foreach ($users as $user) {
-            $user->assignRole('admin');
-        }
+        // Create users with roles in a more concise way
+        $roleMap = [
+            'admin' => 5,
+            'seller' => 15,
+            'customer' => 30
+        ];
 
-        $users = User::factory(15)->create();
-        foreach ($users as $user) {
-            $user->assignRole('seller');
-        }
-
-        $users = User::factory(30)->create();
-        foreach ($users as $user) {
-            $user->assignRole('customer');
+        foreach ($roleMap as $role => $count) {
+            User::factory($count)
+                ->withPersonalTeam()
+                ->create()
+                ->each(fn($user) => $user->assignRole($role));
         }
     }
 }

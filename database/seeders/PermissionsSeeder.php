@@ -19,45 +19,115 @@ class PermissionsSeeder extends Seeder
         // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // create permissions
+        // Create permissions
+        // Product permissions
+        Permission::create(['name' => 'view products']);
+        Permission::create(['name' => 'create products']);
         Permission::create(['name' => 'edit products']);
         Permission::create(['name' => 'delete products']);
         Permission::create(['name' => 'publish products']);
         Permission::create(['name' => 'unpublish products']);
 
-        // create roles and assign existing permissions
-        $role1 = Role::create(['name' => 'writer']);
-        $role1->givePermissionTo('edit products');
-        $role1->givePermissionTo('delete products');
+        // Order permissions
+        Permission::create(['name' => 'view orders']);
+        Permission::create(['name' => 'manage orders']);
+        Permission::create(['name' => 'view own orders']);
 
-        $role2 = Role::create(['name' => 'admin']);
-        $role2->givePermissionTo('publish products');
-        $role2->givePermissionTo('unpublish products');
+        // User permissions
+        Permission::create(['name' => 'view users']);
+        Permission::create(['name' => 'edit users']);
+        Permission::create(['name' => 'delete users']);
 
-        $role3 = Role::create(['name' => 'Super-Admin']);
-        // gets all permissions via Gate::before rule; see AuthServiceProvider
+        // Seller application permissions
+        Permission::create(['name' => 'view seller applications']);
+        Permission::create(['name' => 'manage seller applications']);
 
-        // create demo users
-        $user = User::factory()->create([
-            'name' => 'Example User',
-            'email' => 'tester@example.com',
+        // Create roles and assign permissions
+        // Customer role
+        $customerRole = Role::create(['name' => 'customer']);
+        $customerRole->givePermissionTo([
+            'view products',
+            'view own orders',
         ]);
-        $user->assignRole($role1);
 
-        $user = User::factory()->create([
-            'name' => 'Example Admin User',
+        // Seller role
+        $sellerRole = Role::create(['name' => 'seller']);
+        $sellerRole->givePermissionTo([
+            'view products',
+            'create products',
+            'edit products',
+            'delete products',
+            'view orders',
+            'view own orders',
+        ]);
+
+        // Manager role
+        $managerRole = Role::create(['name' => 'manager']);
+        $managerRole->givePermissionTo([
+            'view products',
+            'edit products',
+            'publish products',
+            'unpublish products',
+            'view orders',
+            'manage orders',
+            'view users',
+        ]);
+
+        // Admin role
+        $adminRole = Role::create(['name' => 'admin']);
+        $adminRole->givePermissionTo([
+            'view products',
+            'create products',
+            'edit products',
+            'delete products',
+            'publish products',
+            'unpublish products',
+            'view orders',
+            'manage orders',
+            'view users',
+            'edit users',
+            'view seller applications',
+            'manage seller applications',
+        ]);
+
+        // Super Admin role
+        $superAdminRole = Role::create(['name' => 'super-admin']);
+        // Super Admin gets all permissions via Gate::before rule in AuthServiceProvider
+
+        // Create demo users
+        // Customer
+        $user = User::factory()->withPersonalTeam()->create([
+            'name' => 'Test Customer',
+            'email' => 'customer@example.com',
+        ]);
+        $user->assignRole($customerRole);
+
+        // Seller
+        $user = User::factory()->withPersonalTeam()->create([
+            'name' => 'Test Seller',
+            'email' => 'seller@example.com',
+        ]);
+        $user->assignRole($sellerRole);
+
+        // Manager
+        $user = User::factory()->withPersonalTeam()->create([
+            'name' => 'Test Manager',
+            'email' => 'manager@example.com',
+        ]);
+        $user->assignRole($managerRole);
+
+        // Admin
+        $user = User::factory()->withPersonalTeam()->create([
+            'name' => 'Test Admin',
             'email' => 'admin@example.com',
         ]);
-        $user->assignRole($role2);
+        $user->assignRole($adminRole);
 
-        $user = User::factory()->create([
-            'name' => 'Example Super-Admin User',
-            'email' => 'admin@me.com',
+        // Super Admin
+        $user = User::factory()->withPersonalTeam()->create([
+            'name' => 'Test Super Admin',
+            'email' => 'superadmin@example.com',
         ]);
-        $user->assignRole($role3);
-
-        Role::create(['name' => 'seller']);
-        Role::create(['name' => 'manager']);
-        Role::create(['name' => 'customer']);
+        $user->assignRole($superAdminRole);
     }
 }

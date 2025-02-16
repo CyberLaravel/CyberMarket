@@ -9,6 +9,7 @@ use App\Http\Controllers\SellerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductImageController;
 use App\Http\Controllers\SellerApplicationController;
+use App\Http\Controllers\Admin\SellerApplicationController as AdminSellerApplicationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -81,12 +82,31 @@ $commonMiddleware = [
 
 // Admin routes
 Route::middleware($commonMiddleware + ['admin'])->group(function () {
-    Route::get(
-        '/admin/dashboard',
-        [AdminController::class, 'dashboard']
-    )->name('admin.dashboard');
+
 
     // Add more admin routes here
+    Route::middleware([
+        'auth:sanctum',
+        config('jetstream.auth_session'),
+        'verified',
+        'role:admin',
+
+    ])->group(function () {
+        Route::get(
+            '/admin/dashboard',
+            [AdminController::class, 'dashboard']
+        )->name('admin.dashboard');
+
+
+        Route::get('/admin/seller-applications', [AdminSellerApplicationController::class, 'index'])
+            ->name('admin.seller-applications.index');
+        Route::get('/admin/seller-applications/{application}', [AdminSellerApplicationController::class, 'show'])
+            ->name('admin.seller-applications.show');
+        Route::post('/admin/seller-applications/{application}/approve', [AdminSellerApplicationController::class, 'approve'])
+            ->name('admin.seller-applications.approve');
+        Route::post('/admin/seller-applications/{application}/reject', [AdminSellerApplicationController::class, 'reject'])
+            ->name('admin.seller-applications.reject');
+    });
 });
 
 // Seller routes
