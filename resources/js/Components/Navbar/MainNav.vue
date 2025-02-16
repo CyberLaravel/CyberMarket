@@ -16,7 +16,7 @@ const navLinks = computed(() => {
     ];
 
     // Add seller application link for non-sellers
-    if (!user.value.roles.includes("seller")) {
+    if (!user.value.is_admin) {
         links.push({
             route: "seller.apply",
             label: "Become a Seller",
@@ -25,7 +25,7 @@ const navLinks = computed(() => {
     }
 
     // Add seller-specific links
-    if (user.value.roles.includes("seller")) {
+    if (user.value.is_admin) {
         links.push({
             route: "seller.dashboard",
             label: "Seller Dashboard",
@@ -34,7 +34,7 @@ const navLinks = computed(() => {
     }
 
     // Add admin-specific links
-    if (user.value.roles.includes("admin")) {
+    if (user.value.is_admin) {
         links.push({
             route: "admin.dashboard",
             label: "Admin Dashboard",

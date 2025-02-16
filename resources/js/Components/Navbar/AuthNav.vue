@@ -1,6 +1,6 @@
 <script setup>
-import { usePage } from "@inertiajs/vue3";
-import { Link } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
+import { computed } from "vue";
 import MainNav from "./MainNav.vue";
 import Search from "./Search.vue";
 import TeamSwitcher from "./TeamSwitcher.vue";
@@ -8,6 +8,7 @@ import UserNav from "./UserNav.vue";
 import CartButton from "@/Components/Cart/CartButton.vue";
 
 const page = usePage();
+const user = computed(() => page.props.auth.user);
 </script>
 
 <template>

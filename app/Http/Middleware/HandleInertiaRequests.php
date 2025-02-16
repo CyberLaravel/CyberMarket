@@ -32,9 +32,22 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
-            'ziggy' => fn () => [
+            'ziggy' => fn() => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
+            ],
+            'auth' => [
+                'user' => $request->user() ? [
+                    'id' => $request->user()->id,
+                    'name' => $request->user()->name,
+                    'email' => $request->user()->email,
+                    'roles' => $request->user()->roles->pluck('name'),
+                    'current_team' => $request->user()->currentTeam,
+                    'current_team_id' => $request->user()->currentTeam->id,
+                    'is_seller' => $request->user()->roles->contains('name', 'seller'),
+                    'is_admin' => $request->user()->roles->contains('name', 'admin'),
+                    'all_teams' => $request->user()->allTeams(),
+                ] : null,
             ],
         ];
     }

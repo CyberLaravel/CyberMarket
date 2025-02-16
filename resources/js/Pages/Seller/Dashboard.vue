@@ -19,21 +19,21 @@ const stats = computed(() => [
         icon: Package,
     },
     {
-        title: "Total Sales",
-        value: props.stats.totalSales,
-        description: "Completed orders",
+        title: "Total Orders",
+        value: props.stats.totalOrders,
+        description: "Orders with your products",
         icon: ShoppingCart,
     },
     {
         title: "Total Revenue",
         value: `$${props.stats.totalRevenue.toFixed(2)}`,
-        description: "From all sales",
+        description: "From all orders",
         icon: DollarSign,
     },
     {
-        title: "Average Order",
+        title: "Average Order Value",
         value: `$${props.stats.averageOrderValue.toFixed(2)}`,
-        description: "Per order",
+        description: "Per order with your products",
         icon: TrendingUp,
     },
 ]);
@@ -151,7 +151,10 @@ const stats = computed(() => [
                                     >
                                         <Link
                                             :href="
-                                                route('orders.show', order.id)
+                                                route(
+                                                    'seller.orders.show',
+                                                    order.id
+                                                )
                                             "
                                             class="text-yellow-400 font-medium hover:text-yellow-300 transition-colors"
                                         >
@@ -164,6 +167,9 @@ const stats = computed(() => [
                                                     'completed',
                                                 'text-yellow-400':
                                                     order.status === 'pending',
+                                                'text-blue-300':
+                                                    order.status ===
+                                                    'processing',
                                             }"
                                             class="text-xs font-medium px-2 py-1 rounded-full bg-gray-800"
                                         >
@@ -173,11 +179,14 @@ const stats = computed(() => [
                                     <p class="text-sm text-blue-300">
                                         {{ order.user.name }}
                                     </p>
-                                    <p
-                                        class="text-sm text-yellow-400 font-medium"
+                                    <div
+                                        class="text-sm text-yellow-400 font-medium flex justify-between"
                                     >
-                                        ${{ order.total }}
-                                    </p>
+                                        <span>${{ order.seller_total }}</span>
+                                        <span class="text-blue-300">{{
+                                            order.created_at
+                                        }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </CardContent>
