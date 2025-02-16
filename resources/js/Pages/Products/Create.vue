@@ -1,10 +1,10 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
 
 import { toast } from "@/Components/ui/toast";
-import { XMarkIcon } from "@heroicons/vue/24/solid";
+import { XMarkIcon, PencilIcon } from "@heroicons/vue/24/solid";
 import CustomSelect from "@/Components/ui/custom-select/CustomSelect.vue";
 import CustomOption from "@/Components/ui/custom-select/CustomOption.vue";
 import CustomInput from "@/Components/ui/custom-input/CustomInput.vue";
@@ -25,7 +25,32 @@ const form = useForm({
     images: [],
     primary_image_index: 0,
     category_id: "",
+    slug: "",
 });
+
+const isEditingSlug = ref(false);
+
+const toggleSlugEdit = () => {
+    isEditingSlug.value = !isEditingSlug.value;
+};
+
+const generateSlug = (value) => {
+    return value
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
+        .trim();
+};
+
+watch(
+    () => form.name,
+    (newValue) => {
+        if (!isEditingSlug.value) {
+            form.slug = generateSlug(newValue);
+        }
+    }
+);
 
 const submit = () => {
     form.post("/products", {
@@ -100,8 +125,35 @@ const removeImage = (index) => {
                                 v-model="form.name"
                                 placeholder="Enter product name"
                                 :error="form.errors.name"
-                                required
                             />
+                        </div>
+
+                        <div class="space-y-2">
+                            <CustomLabel for="slug">URL Slug</CustomLabel>
+                            <div class="relative">
+                                <CustomInput
+                                    id="slug"
+                                    v-model="form.slug"
+                                    placeholder="product-url-slug"
+                                    :error="form.errors.slug"
+                                    required
+                                    :disabled="!isEditingSlug"
+                                    class="pr-12"
+                                />
+                                <button
+                                    type="button"
+                                    @click="toggleSlugEdit"
+                                    class="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 text-sm rounded-md transition-colors duration-200"
+                                    :class="
+                                        isEditingSlug
+                                            ? 'bg-yellow-400 text-black hover:bg-yellow-300'
+                                            : 'text-blue-300 hover:text-yellow-400'
+                                    "
+                                >
+                                    <span v-if="isEditingSlug">Done</span>
+                                    <PencilIcon v-else class="w-4 h-4" />
+                                </button>
+                            </div>
                         </div>
 
                         <div class="space-y-2">
@@ -114,7 +166,6 @@ const removeImage = (index) => {
                                 min="0"
                                 placeholder="Enter price"
                                 :error="form.errors.price"
-                                required
                             />
                         </div>
                     </div>
@@ -126,7 +177,6 @@ const removeImage = (index) => {
                             v-model="form.description"
                             placeholder="Enter product description"
                             :error="form.errors.description"
-                            required
                             rows="4"
                         />
                     </div>
@@ -157,7 +207,14 @@ const removeImage = (index) => {
                             accept="image/*"
                             multiple
                             supportedFormats="JPG, PNG, GIF"
+                            :error="form.errors.images"
                         />
+                        <p
+                            v-if="form.errors.images"
+                            class="text-red-400 text-sm mt-1"
+                        >
+                            {{ form.errors.images }}
+                        </p>
                     </div>
 
                     <div class="mt-4">

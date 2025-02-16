@@ -14,6 +14,10 @@ const props = defineProps({
         type: String,
         default: "JPG, PNG, GIF",
     },
+    error: {
+        type: String,
+        default: "",
+    },
 });
 
 const emit = defineEmits(["filesSelected"]);
@@ -54,6 +58,7 @@ const triggerFileInput = () => {
         :class="{
             'border-blue-300 bg-gray-700 shadow-[0_0_15px_rgba(147,197,253,0.3)]':
                 isDragging,
+            'border-red-400 hover:border-red-300': error,
         }"
         @drop="handleDrop"
         @dragover="handleDragOver"

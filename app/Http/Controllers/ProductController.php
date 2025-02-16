@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Category;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -94,21 +95,21 @@ class ProductController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'category_id' => $request->category_id,
+            'slug' => $request->slug,
         ]);
 
         // Handle image uploads if necessary
         if ($request->hasFile('images')) {
-            $firstImage = true;
-            foreach ($request->file('images') as $image) {
+            foreach ($request->file('images') as $index => $image) {
                 $path = $image->store('products/' . $product->id, 's3');
-                $product->images()->create([
-                    'image_path' => $path
+                $productImage = $product->images()->create([
+                    'image_path' => $path,
+                    'is_primary' => (int)$index === (int)$request->primary_image_index
                 ]);
 
-                // Set the first image as primary
-                if ($firstImage) {
-                    $product->update(['primary_image' => $path]);
-                    $firstImage = false;
+                // Set primary_image_id if this is the primary image
+                if ((int)$index === (int)$request->primary_image_index) {
+                    $product->update(['primary_image_id' => $productImage->id]);
                 }
             }
         }

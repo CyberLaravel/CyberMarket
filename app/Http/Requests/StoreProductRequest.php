@@ -26,6 +26,10 @@ class StoreProductRequest extends FormRequest
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'category_id' => 'required|exists:categories,id',
+            'slug' => 'required|string|max:255|unique:products,slug',
+            'images' => 'required|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'primary_image_index' => 'required|integer|min:0',
         ];
 
         // Only require images for new products (POST requests)
@@ -50,5 +54,16 @@ class StoreProductRequest extends FormRequest
             'category_id.required' => 'Please select a category',
             'category_id.exists' => 'The selected category is invalid',
         ];
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            if ($this->hasFile('images') && $this->has('primary_image_index')) {
+                if ($this->primary_image_index >= count($this->file('images'))) {
+                    $validator->errors()->add('primary_image_index', 'The primary image index is invalid.');
+                }
+            }
+        });
     }
 }
