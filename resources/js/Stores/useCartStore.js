@@ -1,3 +1,4 @@
+import { getProductPrimaryImageUrl } from "@/utils/imageUtils";
 import { defineStore } from "pinia";
 
 export const useCartStore = defineStore("cart", {
@@ -17,6 +18,16 @@ export const useCartStore = defineStore("cart", {
             const item = state.items.find((item) => item.id === productId);
             return item ? item.quantity : 0;
         },
+
+        isEmpty: (state) => state.items.length === 0,
+
+        cartTotalWithTax: (state) => {
+            const subtotal = state.items.reduce(
+                (total, item) => total + item.price * item.quantity,
+                0
+            );
+            return +(subtotal * 1.15).toFixed(2); // Assuming 15% tax
+        },
     },
 
     actions: {
@@ -25,6 +36,7 @@ export const useCartStore = defineStore("cart", {
                 (item) => item.id === product.id
             );
 
+console.log({image: getProductPrimaryImageUrl(product)})
             if (existingItem) {
                 existingItem.quantity += 1;
             } else {
@@ -32,7 +44,7 @@ export const useCartStore = defineStore("cart", {
                     id: product.id,
                     name: product.name,
                     price: product.price,
-                    image: product.image,
+                    image: getProductPrimaryImageUrl(product),
                     quantity: 1,
                 });
             }
@@ -58,11 +70,33 @@ export const useCartStore = defineStore("cart", {
         clearCart() {
             this.items = [];
         },
+
+        incrementQuantity(productId) {
+            const item = this.items.find((item) => item.id === productId);
+            if (item) {
+                item.quantity += 1;
+            }
+        },
+
+        decrementQuantity(productId) {
+            const item = this.items.find((item) => item.id === productId);
+            if (item) {
+                if (item.quantity > 1) {
+                    item.quantity -= 1;
+                } else {
+                    this.removeFromCart(productId);
+                }
+            }
+        },
+
+        isItemInCart(productId) {
+            return this.items.some((item) => item.id === productId);
+        },
     },
 
     persist: {
-        key: 'cart-storage',
+        key: "cart-storage",
         storage: localStorage,
-        paths: ['items'], // only persist the items array
+        paths: ["items"], // only persist the items array
     },
 });

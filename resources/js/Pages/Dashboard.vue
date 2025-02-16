@@ -2,7 +2,6 @@
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { Link } from "@inertiajs/vue3";
 import { computed } from "vue";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { BarChart, Users, Package, ShoppingCart } from "lucide-vue-next";
 
 const props = defineProps({
@@ -49,44 +48,45 @@ const stats = computed(() => [
                 <div
                     class="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-8"
                 >
-                    <Card
+                    <div
                         v-for="stat in stats"
                         :key="stat.title"
-                        class="bg-gray-800 border-yellow-400 hover:shadow-neon transition-all duration-300"
+                        class="bg-gray-800 border border-yellow-400 rounded-lg p-4 hover:shadow-neon transition-all duration-300"
                     >
-                        <CardHeader
+                        <div
                             class="flex flex-row items-center justify-between pb-2"
                         >
-                            <CardTitle
-                                class="text-yellow-400 text-sm font-medium"
-                            >
+                            <h3 class="text-yellow-400 text-sm font-medium">
                                 {{ stat.title }}
-                            </CardTitle>
+                            </h3>
                             <component
                                 :is="stat.icon"
                                 class="h-4 w-4 text-blue-300"
                             />
-                        </CardHeader>
-                        <CardContent>
+                        </div>
+                        <div>
                             <div class="text-2xl font-bold text-yellow-400">
                                 {{ stat.value }}
                             </div>
                             <p class="text-xs text-blue-300">
                                 {{ stat.description }}
                             </p>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Recent Products -->
+                <!-- Recent Products and Orders Grid -->
                 <div class="grid gap-6 grid-cols-1 lg:grid-cols-2 mb-8">
-                    <Card class="bg-gray-800 border-yellow-400">
-                        <CardHeader>
-                            <CardTitle class="text-yellow-400"
-                                >Recent Products</CardTitle
-                            >
-                        </CardHeader>
-                        <CardContent>
+                    <!-- Recent Products -->
+                    <div
+                        class="bg-gray-800 border border-yellow-400 rounded-lg"
+                    >
+                        <div class="p-4 border-b border-yellow-400">
+                            <h3 class="text-yellow-400 text-lg font-bold">
+                                Recent Products
+                            </h3>
+                        </div>
+                        <div class="p-4">
                             <div class="space-y-4">
                                 <div
                                     v-for="product in recentProducts"
@@ -126,17 +126,19 @@ const stats = computed(() => [
                                     </div>
                                 </div>
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
 
                     <!-- Recent Orders -->
-                    <Card class="bg-gray-800 border-yellow-400">
-                        <CardHeader>
-                            <CardTitle class="text-yellow-400"
-                                >Recent Orders</CardTitle
-                            >
-                        </CardHeader>
-                        <CardContent>
+                    <div
+                        class="bg-gray-800 border border-yellow-400 rounded-lg"
+                    >
+                        <div class="p-4 border-b border-yellow-400">
+                            <h3 class="text-yellow-400 text-lg font-bold">
+                                Recent Orders
+                            </h3>
+                        </div>
+                        <div class="p-4">
                             <div class="space-y-4">
                                 <div
                                     v-for="order in recentOrders"
@@ -175,8 +177,8 @@ const stats = computed(() => [
                                     </div>
                                 </div>
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

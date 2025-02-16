@@ -13,6 +13,10 @@ import ProductButtonDelete from "./ProductButtonDelete.vue";
 import ProductButtonBuy from "./ProductButtonBuy.vue";
 import ProductButtonEdit from "./ProductButtonEdit.vue";
 import ProductButtonAddToCart from "./ProductButtonAddToCart.vue";
+import { getProductPrimaryImageUrl } from "@/utils/imageUtils";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
 
 const props = defineProps({
     product: {
@@ -20,14 +24,9 @@ const props = defineProps({
         required: true,
     },
 });
-console.log(props.product);
-const getImageUrl = (product) => {
-    if (product?.primary_image?.image_path) {
-        // Remove any leading slashes and combine with bucket path
-        const imagePath = product.primary_image.image_path.replace(/^\/+/, "");
-        return `http://localhost:9000/glitchmart/${imagePath}`;
-    }
-    return "https://placehold.co/600x600?text=No+Image";
+
+const getRelativeTime = (date) => {
+    return dayjs(date).fromNow();
 };
 </script>
 
@@ -48,7 +47,7 @@ const getImageUrl = (product) => {
                 </div>
 
                 <img
-                    :src="getImageUrl(product)"
+                    :src="getProductPrimaryImageUrl(product)"
                     :alt="product.name"
                     class="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
                 />
@@ -65,6 +64,9 @@ const getImageUrl = (product) => {
                 >
                     Sold by {{ product.seller.name }}
                 </Badge>
+                <p class="text-sm text-blue-300 font-orbitron opacity-75">
+                    {{ getRelativeTime(product.created_at) }}
+                </p>
                 <CardDescription
                     class="line-clamp-2 text-blue-300 font-orbitron"
                 >

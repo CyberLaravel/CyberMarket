@@ -70,37 +70,48 @@ const handleCheckout = () => {
 
 <template>
     <AppLayout>
-        <template >
+        <template>
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <Button
                         variant="outline"
                         @click="$inertia.visit(route('products.index'))"
-                        class="flex items-center gap-2"
+                        class="flex items-center gap-2 border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black transition-colors shadow-glow"
                     >
                         <ArrowLeft class="h-4 w-4" />
                         Continue Shopping
                     </Button>
-                    <h2 class="text-2xl font-bold">Checkout</h2>
+                    <h2
+                        class="text-2xl font-bold text-yellow-400 font-orbitron glitch-text"
+                    >
+                        Checkout
+                    </h2>
                 </div>
             </div>
         </template>
 
-        <template > Complete your purchase </template>
+        <template>
+            <h3 class="text-blue-300 font-orbitron">Complete your purchase</h3>
+        </template>
 
-        <div class="py-6 px-4 sm:px-6 lg:px-8">
+        <div class="py-6 px-4 sm:px-6 lg:px-8 bg-gray-900">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Cart Summary -->
                 <div class="lg:col-span-2 space-y-4">
-                    <Card v-if="cart.items.length">
+                    <Card
+                        v-if="cart.items.length"
+                        class="border-yellow-400 bg-gray-800 shadow-glow"
+                    >
                         <CardHeader>
-                            <CardTitle>Shopping Cart</CardTitle>
+                            <CardTitle class="text-yellow-400 font-orbitron"
+                                >Shopping Cart</CardTitle
+                            >
                         </CardHeader>
                         <CardContent class="space-y-4">
                             <div
                                 v-for="item in cart.items"
                                 :key="item.id"
-                                class="flex items-center gap-4 py-4 border-b last:border-0"
+                                class="flex items-center gap-4 py-4 border-b border-gray-700 last:border-0"
                             >
                                 <div
                                     class="h-20 w-20 relative rounded overflow-hidden flex-shrink-0"
@@ -116,8 +127,10 @@ const handleCheckout = () => {
                                     />
                                 </div>
                                 <div class="flex-grow">
-                                    <h3 class="font-medium">{{ item.name }}</h3>
-                                    <p class="text-muted-foreground">
+                                    <h3 class="font-medium text-gray-100">
+                                        {{ item.name }}
+                                    </h3>
+                                    <p class="text-blue-300">
                                         ${{ parseFloat(item.price).toFixed(2) }}
                                     </p>
                                 </div>
@@ -131,12 +144,15 @@ const handleCheckout = () => {
                                                 item.quantity - 1
                                             )
                                         "
+                                        class="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black transition-colors shadow-glow"
                                     >
                                         <Minus class="h-4 w-4" />
                                     </Button>
-                                    <span class="w-8 text-center">{{
-                                        item.quantity
-                                    }}</span>
+                                    <span
+                                        class="w-8 text-center text-yellow-400 font-orbitron"
+                                    >
+                                        {{ item.quantity }}
+                                    </span>
                                     <Button
                                         variant="outline"
                                         size="icon"
@@ -146,13 +162,15 @@ const handleCheckout = () => {
                                                 item.quantity + 1
                                             )
                                         "
+                                        class="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black transition-colors shadow-glow"
                                     >
                                         <Plus class="h-4 w-4" />
                                     </Button>
                                     <Button
-                                        variant="destructive"
+                                        variant="outline"
                                         size="icon"
                                         @click="removeItem(item.id)"
+                                        class="border-red-500 text-red-500 hover:bg-red-500 hover:text-black transition-colors shadow-glow-red"
                                     >
                                         <Trash2 class="h-4 w-4" />
                                     </Button>
@@ -160,11 +178,12 @@ const handleCheckout = () => {
                             </div>
                         </CardContent>
                     </Card>
-                    <Card v-else>
+                    <Card
+                        v-else
+                        class="border-yellow-400 bg-gray-800 shadow-glow"
+                    >
                         <CardContent class="p-6 text-center">
-                            <p class="text-muted-foreground">
-                                Your cart is empty
-                            </p>
+                            <p class="text-gray-100">Your cart is empty</p>
                             <Button
                                 variant="outline"
                                 class="mt-4"
@@ -178,35 +197,44 @@ const handleCheckout = () => {
 
                 <!-- Order Summary and Shipping Form -->
                 <div class="space-y-4">
-                    <Card>
+                    <Card class="border-yellow-400 bg-gray-800 shadow-glow">
                         <CardHeader>
-                            <CardTitle>Order Summary</CardTitle>
+                            <CardTitle class="text-yellow-400 font-orbitron"
+                                >Order Summary</CardTitle
+                            >
                         </CardHeader>
                         <CardContent class="space-y-4">
                             <div class="flex justify-between">
-                                <span class="text-muted-foreground"
-                                    >Subtotal</span
+                                <span class="text-gray-100">Subtotal</span>
+                                <span class="text-blue-300"
+                                    >${{ subtotal.toFixed(2) }}</span
                                 >
-                                <span>${{ subtotal.toFixed(2) }}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-muted-foreground"
-                                    >Tax (10%)</span
+                                <span class="text-gray-100">Tax (10%)</span>
+                                <span class="text-blue-300"
+                                    >${{ tax.toFixed(2) }}</span
                                 >
-                                <span>${{ tax.toFixed(2) }}</span>
                             </div>
                             <div
-                                class="flex justify-between font-bold border-t pt-4"
+                                class="flex justify-between font-bold border-t border-gray-700 pt-4"
                             >
-                                <span>Total</span>
-                                <span>${{ total.toFixed(2) }}</span>
+                                <span class="text-yellow-400">Total</span>
+                                <span class="text-yellow-400"
+                                    >${{ total.toFixed(2) }}</span
+                                >
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card v-if="cart.items.length">
+                    <Card
+                        v-if="cart.items.length"
+                        class="border-yellow-400 bg-gray-800 shadow-glow"
+                    >
                         <CardHeader>
-                            <CardTitle>Shipping Information</CardTitle>
+                            <CardTitle class="text-yellow-400 font-orbitron"
+                                >Shipping Information</CardTitle
+                            >
                         </CardHeader>
                         <CardContent>
                             <form
@@ -214,68 +242,88 @@ const handleCheckout = () => {
                                 class="space-y-4"
                             >
                                 <div class="space-y-2">
-                                    <Label for="full_name">Full Name</Label>
+                                    <Label class="text-gray-100" for="full_name"
+                                        >Full Name</Label
+                                    >
                                     <Input
                                         id="full_name"
                                         v-model="
                                             form.shipping_details.full_name
                                         "
                                         required
+                                        class="bg-gray-800 border-yellow-400 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-yellow-400"
                                     />
                                 </div>
 
                                 <div class="space-y-2">
-                                    <Label for="email">Email</Label>
+                                    <Label class="text-gray-100" for="email"
+                                        >Email</Label
+                                    >
                                     <Input
                                         id="email"
                                         type="email"
                                         v-model="form.shipping_details.email"
                                         required
+                                        class="bg-gray-800 border-yellow-400 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-yellow-400"
                                     />
                                 </div>
 
                                 <div class="space-y-2">
-                                    <Label for="phone">Phone</Label>
+                                    <Label class="text-gray-100" for="phone"
+                                        >Phone</Label
+                                    >
                                     <Input
                                         id="phone"
                                         v-model="form.shipping_details.phone"
                                         required
+                                        class="bg-gray-800 border-yellow-400 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-yellow-400"
                                     />
                                 </div>
 
                                 <div class="space-y-2">
-                                    <Label for="address">Address</Label>
+                                    <Label class="text-gray-100" for="address"
+                                        >Address</Label
+                                    >
                                     <Input
                                         id="address"
                                         v-model="form.shipping_details.address"
                                         required
+                                        class="bg-gray-800 border-yellow-400 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-yellow-400"
                                     />
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-4">
                                     <div class="space-y-2">
-                                        <Label for="city">City</Label>
+                                        <Label class="text-gray-100" for="city"
+                                            >City</Label
+                                        >
                                         <Input
                                             id="city"
                                             v-model="form.shipping_details.city"
                                             required
+                                            class="bg-gray-800 border-yellow-400 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-yellow-400"
                                         />
                                     </div>
                                     <div class="space-y-2">
-                                        <Label for="state">State</Label>
+                                        <Label class="text-gray-100" for="state"
+                                            >State</Label
+                                        >
                                         <Input
                                             id="state"
                                             v-model="
                                                 form.shipping_details.state
                                             "
                                             required
+                                            class="bg-gray-800 border-yellow-400 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-yellow-400"
                                         />
                                     </div>
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-4">
                                     <div class="space-y-2">
-                                        <Label for="postal_code"
+                                        <Label
+                                            class="text-gray-100"
+                                            for="postal_code"
                                             >Postal Code</Label
                                         >
                                         <Input
@@ -285,23 +333,29 @@ const handleCheckout = () => {
                                                     .postal_code
                                             "
                                             required
+                                            class="bg-gray-800 border-yellow-400 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-yellow-400"
                                         />
                                     </div>
                                     <div class="space-y-2">
-                                        <Label for="country">Country</Label>
+                                        <Label
+                                            class="text-gray-100"
+                                            for="country"
+                                            >Country</Label
+                                        >
                                         <Input
                                             id="country"
                                             v-model="
                                                 form.shipping_details.country
                                             "
                                             required
+                                            class="bg-gray-800 border-yellow-400 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-yellow-400"
                                         />
                                     </div>
                                 </div>
 
                                 <Button
                                     type="submit"
-                                    class="w-full"
+                                    class="w-full bg-yellow-400 text-black hover:bg-yellow-300 transition-colors shadow-glow font-orbitron"
                                     :disabled="form.processing"
                                 >
                                     {{

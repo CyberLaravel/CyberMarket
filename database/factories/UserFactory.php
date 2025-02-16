@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Jetstream\Features;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -35,9 +38,62 @@ class UserFactory extends Factory
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
             'remember_token' => Str::random(10),
-            'profile_photo_path' => null,
+            'profile_photo_path' => $this->generateProfilePhoto(),
             'current_team_id' => null,
+            'created_at' => fake()->dateTimeBetween('-1 year', 'now'),
+            'updated_at' => fake()->dateTimeBetween('-1 year', 'now'),
         ];
+    }
+
+    /**
+     * Generate and save a profile photo.
+     */
+    protected function generateProfilePhoto(): ?string
+    {
+        try {
+            $seed = fake()->unique()->name();
+
+            Log::info('Generating avatar', [
+                'seed' => $seed,
+                'endpoint' => config('services.avatar.endpoint')
+            ]);
+
+            $response = Http::post(config('services.avatar.endpoint'), [
+                'seed' => $seed
+            ]);
+
+            if (!$response->successful()) {
+                Log::warning('Avatar generation request failed', [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                    'seed' => $seed
+                ]);
+                throw new \Exception('Failed to generate avatar: ' . $response->body());
+            }
+
+            $svg = $response->body();
+            $filename = 'profile-photos/auto-generated/' . Str::random(20) . '.svg';
+
+            Log::info('Storing avatar', [
+                'filename' => $filename,
+                'size' => strlen($svg)
+            ]);
+
+            Storage::disk('s3')->put($filename, $svg);
+
+            Log::info('Avatar generated and stored successfully', [
+                'filename' => $filename
+            ]);
+
+            return $filename;
+        } catch (\Exception $e) {
+            Log::error('Avatar generation failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'seed' => $seed ?? null
+            ]);
+            return null;
+        }
     }
 
     /**

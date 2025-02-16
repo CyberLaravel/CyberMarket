@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
@@ -12,14 +12,15 @@ import {
 } from "@/Components/ui/card";
 import { toast } from "@/Components/ui/toast";
 
-import { Head, Link } from "@inertiajs/vue3";
+import { Head, Link, router, usePage } from "@inertiajs/vue3";
+import { route } from "ziggy-js";
 
 defineProps(["canResetPassword", "status", "errors"]);
 const emit = defineEmits(["submit"]);
 
-const email = defineModel("email");
-const password = defineModel("password");
-const rememberMe = defineModel("rememberMe");
+const email = defineModel<string>("email");
+const password = defineModel<string>("password");
+const rememberMe = defineModel<boolean>("rememberMe");
 
 function handleLogin() {
     toast({

@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'avatar' => [
+        'endpoint' => env('AVATAR_GENERATION_ENDPOINT', 'http://your-avatar-service/generate'),
+    ],
+
 ];

@@ -47,6 +47,7 @@ class HandleInertiaRequests extends Middleware
                     'is_seller' => $request->user()->roles->contains('name', 'seller'),
                     'is_admin' => $request->user()->roles->contains('name', 'admin'),
                     'all_teams' => $request->user()->allTeams(),
+                    'profile_photo_url' => $request->user()->profile_photo_url,
                 ] : null,
             ],
         ];

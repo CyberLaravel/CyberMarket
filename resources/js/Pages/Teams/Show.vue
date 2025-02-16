@@ -14,32 +14,33 @@ defineProps({
 
 <template>
     <AppLayout title="Team Settings">
-        <template>
-            <h2
-                class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
-            >
-                Team Settings
-            </h2>
-        </template>
+        <h2
+            class="font-['Orbitron'] text-2xl font-bold text-yellow-400 leading-tight glitch-text"
+        >
+            Team Settings
+        </h2>
 
-        <div>
-            <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-                <UpdateTeamNameForm :team="team" :permissions="permissions" />
+        <div class="cyberpunk-section">
+            <div class="cyberpunk-container">
+                <div class="cyberpunk-card">
+                    <UpdateTeamNameForm
+                        :team="team"
+                        :permissions="permissions"
+                    />
+                </div>
 
-                <TeamMemberManager
-                    class="mt-10 sm:mt-0"
-                    :team="team"
-                    :available-roles="availableRoles"
-                    :user-permissions="permissions"
-                />
+                <div class="cyberpunk-card">
+                    <TeamMemberManager
+                        :team="team"
+                        :available-roles="availableRoles"
+                        :user-permissions="permissions"
+                    />
+                </div>
+                <div v-if="permissions.canDeleteTeam && !team.personal_team">
+                    <SectionBorder class="neon-border" />
 
-                <template
-                    v-if="permissions.canDeleteTeam && !team.personal_team"
-                >
-                    <SectionBorder />
-
-                    <DeleteTeamForm class="mt-10 sm:mt-0" :team="team" />
-                </template>
+                    <DeleteTeamForm :team="team" />
+                </div>
             </div>
         </div>
     </AppLayout>

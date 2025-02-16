@@ -27,9 +27,9 @@ class ProductFactory extends Factory
             'slug' => Str::slug($name),
             'description' => fake()->sentence(),
             'price' => fake()->randomFloat(2, 5, 1000),
-            'created_at' => now(),
-            'updated_at' => now(),
             'category_id' => Category::inRandomOrder()->first()->id,
+            'created_at' => fake()->dateTimeBetween('-1 year', 'now'),
+            'updated_at' => fake()->dateTimeBetween('-1 year', 'now'),
         ];
     }
 }

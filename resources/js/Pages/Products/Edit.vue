@@ -17,6 +17,7 @@ import {
     SelectContent,
     SelectItem,
 } from "@/Components/ui/select";
+import { getImageUrl } from "@/utils/imageUtils";
 
 const props = defineProps({
     product: {
@@ -28,17 +29,6 @@ const props = defineProps({
         required: true,
     },
 });
-
-const HOST = import.meta.env.VITE_STORAGE_HOST || "http://localhost:9000";
-const BUCKET = import.meta.env.VITE_STORAGE_BUCKET || "glitchmart";
-
-const getImageUrl = (imagePath) => {
-    if (imagePath) {
-        const cleanPath = imagePath.replace(/^\/+/, "");
-        return `${HOST}/${BUCKET}/${cleanPath}`;
-    }
-    return null;
-};
 
 const form = useForm({
     name: props.product.data.name,

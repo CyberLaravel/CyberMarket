@@ -38,9 +38,9 @@ const logout = () => {
             >
                 <Avatar class="h-8 w-8 ring-1 ring-yellow-400">
                     <AvatarImage
-                        :src="`https://avatar.vercel.sh/${user.id}.png`"
+                        :src="user.profile_photo_url"
                         :alt="user.name"
-                        class="grayscale hover:grayscale-0 transition-all duration-300"
+                        class="hover:grayscale-0 transition-all duration-300"
                     />
                     <AvatarFallback class="bg-gray-900 text-yellow-400">
                         {{ user.name.charAt(0) }}
