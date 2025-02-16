@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -12,6 +13,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Category;
 use Illuminate\Support\Facades\Log;
+use App\Http\Resources\CategoryResource;
 
 class ProductController extends Controller
 {
@@ -122,13 +124,14 @@ class ProductController extends Controller
     {
         return Inertia::render('Products/Edit', [
             'product' => ProductResource::make($product->load(['images', 'seller', 'primaryImage'])),
+            'categories' => Category::all(),
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product)
     {
         Gate::authorize('update', $product);
 
@@ -138,6 +141,7 @@ class ProductController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'category_id' => $request->category_id,
+            'slug' => $request->slug,
         ]);
 
         // Handle new image uploads if necessary

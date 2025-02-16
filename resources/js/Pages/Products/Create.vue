@@ -2,15 +2,20 @@
 import { ref, computed, watch } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
-
 import { toast } from "@/Components/ui/toast";
-import { XMarkIcon, PencilIcon } from "@heroicons/vue/24/solid";
-import CustomSelect from "@/Components/ui/custom-select/CustomSelect.vue";
-import CustomOption from "@/Components/ui/custom-select/CustomOption.vue";
-import CustomInput from "@/Components/ui/custom-input/CustomInput.vue";
-import CustomLabel from "@/Components/ui/custom-label/CustomLabel.vue";
-import CustomTextarea from "@/Components/ui/custom-textarea/CustomTextarea.vue";
-import CustomButton from "@/Components/ui/custom-button/CustomButton.vue";
+import { XIcon, PencilIcon } from "lucide-vue-next";
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
+import { Textarea } from "@/Components/ui/textarea";
+import { Button } from "@/Components/ui/button";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/Components/ui/select";
+import { Card, CardContent } from "@/Components/ui/card";
 import DragDropZone from "@/Components/ui/drag-drop-zone/DragDropZone.vue";
 import ImagePreview from "@/Components/ui/image-preview/ImagePreview.vue";
 
@@ -70,6 +75,7 @@ const submit = () => {
             });
         },
         preserveScroll: true,
+        preserveState: true,
     });
 };
 
@@ -114,135 +120,169 @@ const removeImage = (index) => {
         <!-- Main Content -->
         <div class="py-4 px-4 sm:px-6 lg:px-8">
             <form @submit.prevent="submit" class="space-y-8 max-w-4xl mx-auto">
-                <div
-                    class="bg-gray-900 p-6 rounded-lg border-2 border-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.3)] transition-all duration-300 hover:shadow-[0_0_25px_rgba(250,204,21,0.4)]"
+                <Card
+                    class="bg-gray-900 border-2 border-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.3)] transition-all duration-300 hover:shadow-[0_0_25px_rgba(250,204,21,0.4)]"
                 >
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <CustomLabel for="name">Product Name</CustomLabel>
-                            <CustomInput
-                                id="name"
-                                v-model="form.name"
-                                placeholder="Enter product name"
-                                :error="form.errors.name"
-                            />
-                        </div>
-
-                        <div class="space-y-2">
-                            <CustomLabel for="slug">URL Slug</CustomLabel>
-                            <div class="relative">
-                                <CustomInput
-                                    id="slug"
-                                    v-model="form.slug"
-                                    placeholder="product-url-slug"
-                                    :error="form.errors.slug"
-                                    required
-                                    :disabled="!isEditingSlug"
-                                    class="pr-12"
-                                />
-                                <button
-                                    type="button"
-                                    @click="toggleSlugEdit"
-                                    class="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 text-sm rounded-md transition-colors duration-200"
-                                    :class="
-                                        isEditingSlug
-                                            ? 'bg-yellow-400 text-black hover:bg-yellow-300'
-                                            : 'text-blue-300 hover:text-yellow-400'
-                                    "
+                    <CardContent class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <Label for="name" class="text-blue-300"
+                                    >Product Name</Label
                                 >
-                                    <span v-if="isEditingSlug">Done</span>
-                                    <PencilIcon v-else class="w-4 h-4" />
-                                </button>
+                                <Input
+                                    id="name"
+                                    v-model="form.name"
+                                    placeholder="Enter product name"
+                                    :error="form.errors.name"
+                                    class="bg-gray-800 border-yellow-400 text-gray-100 placeholder:text-gray-500 focus:border-blue-300 focus:ring-blue-300"
+                                />
+                            </div>
+
+                            <div class="space-y-2">
+                                <Label for="slug" class="text-blue-300"
+                                    >URL Slug</Label
+                                >
+                                <div class="relative">
+                                    <Input
+                                        id="slug"
+                                        v-model="form.slug"
+                                        placeholder="product-url-slug"
+                                        :error="form.errors.slug"
+                                        required
+                                        :disabled="!isEditingSlug"
+                                        class="pr-12 bg-gray-800 border-yellow-400 text-gray-100 placeholder:text-gray-500 focus:border-blue-300 focus:ring-blue-300"
+                                    />
+                                    <Button
+                                        type="button"
+                                        @click="toggleSlugEdit"
+                                        variant="ghost"
+                                        class="absolute right-2 top-1/2 -translate-y-1/2"
+                                        :class="
+                                            isEditingSlug
+                                                ? 'text-yellow-400'
+                                                : 'text-blue-300'
+                                        "
+                                    >
+                                        <span v-if="isEditingSlug">Done</span>
+                                        <PencilIcon v-else class="w-4 h-4" />
+                                    </Button>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2">
+                                <Label for="price" class="text-blue-300"
+                                    >Price</Label
+                                >
+                                <Input
+                                    id="price"
+                                    v-model="form.price"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    placeholder="Enter price"
+                                    :error="form.errors.price"
+                                    class="bg-gray-800 border-yellow-400 text-gray-100 placeholder:text-gray-500 focus:border-blue-300 focus:ring-blue-300"
+                                />
                             </div>
                         </div>
 
-                        <div class="space-y-2">
-                            <CustomLabel for="price">Price</CustomLabel>
-                            <CustomInput
-                                id="price"
-                                v-model="form.price"
-                                type="number"
-                                step="0.01"
-                                min="0"
-                                placeholder="Enter price"
-                                :error="form.errors.price"
+                        <div class="space-y-2 mt-6">
+                            <Label for="description" class="text-blue-300"
+                                >Description</Label
+                            >
+                            <Textarea
+                                id="description"
+                                v-model="form.description"
+                                placeholder="Enter product description"
+                                :error="form.errors.description"
+                                rows="4"
+                                class="bg-gray-800 border-yellow-400 text-gray-100 placeholder:text-gray-500 focus:border-blue-300 focus:ring-blue-300"
                             />
                         </div>
-                    </div>
 
-                    <div class="space-y-2 mt-6">
-                        <CustomLabel for="description">Description</CustomLabel>
-                        <CustomTextarea
-                            id="description"
-                            v-model="form.description"
-                            placeholder="Enter product description"
-                            :error="form.errors.description"
-                            rows="4"
-                        />
-                    </div>
-
-                    <div class="space-y-2 mt-6">
-                        <CustomSelect
-                            v-model="form.category_id"
-                            label="Category"
-                            placeholder="Select Category"
-                            :error="form.errors.category_id"
-                        >
-                            <CustomOption
-                                v-for="category in categories"
-                                :key="category.id"
-                                :value="category.id"
+                        <div class="space-y-2 mt-6">
+                            <Label for="category" class="text-blue-300"
+                                >Category</Label
                             >
-                                {{ category.name }}
-                            </CustomOption>
-                        </CustomSelect>
-                    </div>
+                            <Select
+                                v-model="form.category_id"
+                                :error="form.errors.category_id"
+                            >
+                                <SelectTrigger
+                                    class="w-full bg-gray-800 border-yellow-400 text-gray-100 placeholder:text-gray-500 focus:border-blue-300 focus:ring-blue-300"
+                                >
+                                    <SelectValue
+                                        placeholder="Select Category"
+                                    />
+                                </SelectTrigger>
+                                <SelectContent
+                                    class="bg-gray-800 border border-yellow-400"
+                                >
+                                    <SelectItem
+                                        v-for="category in categories"
+                                        :key="category.id"
+                                        :value="category.id"
+                                        class="text-gray-100 hover:bg-gray-700 hover:text-blue-300 focus:bg-gray-700 focus:text-blue-300"
+                                    >
+                                        {{ category.name }}
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                    <div class="space-y-2 mt-6">
-                        <CustomLabel for="images">Product Images</CustomLabel>
-                        <DragDropZone
-                            @filesSelected="
-                                (files) => form.images.push(...files)
-                            "
-                            accept="image/*"
-                            multiple
-                            supportedFormats="JPG, PNG, GIF"
-                            :error="form.errors.images"
-                        />
-                        <p
-                            v-if="form.errors.images"
-                            class="text-red-400 text-sm mt-1"
-                        >
-                            {{ form.errors.images }}
-                        </p>
-                    </div>
+                        <div class="space-y-2 mt-6">
+                            <Label for="images" class="text-blue-300"
+                                >Product Images</Label
+                            >
+                            <DragDropZone
+                                @filesSelected="
+                                    (files) => form.images.push(...files)
+                                "
+                                accept="image/*"
+                                multiple
+                                supportedFormats="JPG, PNG, GIF"
+                                :error="form.errors.images"
+                            />
+                            <p
+                                v-if="form.errors.images"
+                                class="text-red-400 text-sm mt-1"
+                            >
+                                {{ form.errors.images }}
+                            </p>
+                        </div>
 
-                    <div class="mt-4">
-                        <ImagePreview
-                            v-if="previewImages.length"
-                            :images="previewImages"
-                            v-model:primaryIndex="form.primary_image_index"
-                            @removeImage="removeImage"
-                        />
-                    </div>
+                        <div class="mt-4">
+                            <ImagePreview
+                                v-if="previewImages.length"
+                                :images="previewImages"
+                                v-model:primaryIndex="form.primary_image_index"
+                                @removeImage="removeImage"
+                            />
+                        </div>
 
-                    <div class="flex justify-end mt-8 space-x-4">
-                        <CustomButton
-                            @click="$inertia.get('/products')"
-                            variant="secondary"
-                        >
-                            Cancel
-                        </CustomButton>
-                        <CustomButton
-                            type="submit"
-                            :disabled="form.processing"
-                            :processing="form.processing"
-                            variant="primary"
-                        >
-                            Add Product
-                        </CustomButton>
-                    </div>
-                </div>
+                        <div class="flex justify-end mt-8 space-x-4">
+                            <Button
+                                @click="$inertia.get('/products')"
+                                variant="outline"
+                                class="border-yellow-400 text-blue-300 hover:bg-gray-800 hover:text-yellow-400"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                :disabled="form.processing"
+                                :class="{ 'opacity-50': form.processing }"
+                                class="bg-yellow-400 text-black hover:bg-yellow-300"
+                            >
+                                {{
+                                    form.processing
+                                        ? "Adding..."
+                                        : "Add Product"
+                                }}
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
             </form>
         </div>
 

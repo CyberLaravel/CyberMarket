@@ -19,6 +19,8 @@ class ProductResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'slug' => $this->slug,
+            'category_id' => $this->category_id,
             'description' => $this->description,
             'price' => $this->price,
             'seller' => SellerResource::make($this->whenLoaded('seller')),

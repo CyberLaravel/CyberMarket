@@ -3,28 +3,27 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import { Link } from "@inertiajs/vue3";
 import { computed } from "vue";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
-import { BarChart, Users, Package, ShoppingCart } from "lucide-vue-next";
+import { Users, Package, ShoppingCart, DollarSign } from "lucide-vue-next";
 
 const props = defineProps({
     stats: Object,
-    recentProducts: Array,
+    topSellers: Array,
     recentOrders: Array,
+    salesByDay: Array,
 });
 
-console.log(props);
-
 const stats = computed(() => [
-    {
-        title: "Total Products",
-        value: props.stats.totalProducts,
-        description: "Products in marketplace",
-        icon: Package,
-    },
     {
         title: "Total Users",
         value: props.stats.totalUsers,
         description: "Registered users",
         icon: Users,
+    },
+    {
+        title: "Total Products",
+        value: props.stats.totalProducts,
+        description: "Listed products",
+        icon: Package,
     },
     {
         title: "Total Sales",
@@ -35,16 +34,22 @@ const stats = computed(() => [
     {
         title: "Total Revenue",
         value: `$${props.stats.totalRevenue.toFixed(2)}`,
-        description: "Total earnings",
-        icon: BarChart,
+        description: "Platform revenue",
+        icon: DollarSign,
     },
 ]);
 </script>
 
 <template>
-    <AppLayout title="Dashboard">
+    <AppLayout title="Admin Dashboard">
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <h1
+                    class="text-2xl font-bold text-yellow-400 mb-8 font-orbitron glitch-text"
+                >
+                    Admin Dashboard
+                </h1>
+
                 <!-- Stats Grid -->
                 <div
                     class="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-8"
@@ -78,51 +83,47 @@ const stats = computed(() => [
                     </Card>
                 </div>
 
-                <!-- Recent Products -->
-                <div class="grid gap-6 grid-cols-1 lg:grid-cols-2 mb-8">
+                <div class="grid gap-6 grid-cols-1 lg:grid-cols-2">
+                    <!-- Top Sellers -->
                     <Card class="bg-gray-800 border-yellow-400">
                         <CardHeader>
                             <CardTitle class="text-yellow-400"
-                                >Recent Products</CardTitle
+                                >Top Sellers</CardTitle
                             >
                         </CardHeader>
                         <CardContent>
                             <div class="space-y-4">
                                 <div
-                                    v-for="product in recentProducts"
-                                    :key="product.id"
-                                    class="flex items-center gap-4 p-3 bg-gray-900 rounded-lg border border-yellow-400/30 hover:border-yellow-400 transition-colors"
+                                    v-for="seller in topSellers"
+                                    :key="seller.id"
+                                    class="p-3 bg-gray-900 rounded-lg border border-yellow-400/30 hover:border-yellow-400 transition-colors"
                                 >
-                                    <img
-                                        :src="
-                                            product.image_url ||
-                                            'https://dummyimage.com/100x100'
-                                        "
-                                        :alt="product.name"
-                                        class="w-16 h-16 object-cover rounded-lg border border-yellow-400"
-                                    />
-                                    <div class="flex-1 min-w-0">
-                                        <Link
-                                            :href="
-                                                route(
-                                                    'products.show',
-                                                    product.id
-                                                )
-                                            "
-                                            class="text-yellow-400 font-medium hover:text-yellow-300 transition-colors"
-                                        >
-                                            {{ product.name }}
-                                        </Link>
-                                        <p
-                                            class="text-sm text-blue-300 truncate"
-                                        >
-                                            {{ product.description }}
-                                        </p>
-                                        <p
-                                            class="text-sm text-yellow-400 font-medium"
-                                        >
-                                            ${{ product.price }}
-                                        </p>
+                                    <div
+                                        class="flex items-center justify-between"
+                                    >
+                                        <div>
+                                            <p
+                                                class="text-yellow-400 font-medium"
+                                            >
+                                                {{ seller.name }}
+                                            </p>
+                                            <p class="text-sm text-blue-300">
+                                                {{
+                                                    seller.products_count
+                                                }}
+                                                products
+                                            </p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p
+                                                class="text-yellow-400 font-medium"
+                                            >
+                                                ${{ seller.revenue }}
+                                            </p>
+                                            <p class="text-sm text-blue-300">
+                                                {{ seller.orders_count }} orders
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -141,9 +142,11 @@ const stats = computed(() => [
                                 <div
                                     v-for="order in recentOrders"
                                     :key="order.id"
-                                    class="flex items-center gap-4 p-3 bg-gray-900 rounded-lg border border-yellow-400/30 hover:border-yellow-400 transition-colors"
+                                    class="p-3 bg-gray-900 rounded-lg border border-yellow-400/30 hover:border-yellow-400 transition-colors"
                                 >
-                                    <div class="flex-1 min-w-0">
+                                    <div
+                                        class="flex justify-between items-start mb-2"
+                                    >
                                         <Link
                                             :href="
                                                 route('orders.show', order.id)
@@ -152,14 +155,6 @@ const stats = computed(() => [
                                         >
                                             Order #{{ order.id }}
                                         </Link>
-                                        <p class="text-sm text-blue-300">
-                                            {{ order.product.name }}
-                                        </p>
-                                        <p
-                                            class="text-sm text-yellow-400 font-medium"
-                                        >
-                                            ${{ order.total }}
-                                        </p>
                                         <span
                                             :class="{
                                                 'text-green-400':
@@ -168,10 +163,20 @@ const stats = computed(() => [
                                                 'text-yellow-400':
                                                     order.status === 'pending',
                                             }"
-                                            class="text-xs font-medium"
+                                            class="text-xs font-medium px-2 py-1 rounded-full bg-gray-800"
                                         >
                                             {{ order.status }}
                                         </span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <p class="text-sm text-blue-300">
+                                            {{ order.user.name }}
+                                        </p>
+                                        <p
+                                            class="text-sm text-yellow-400 font-medium"
+                                        >
+                                            ${{ order.total }}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -180,10 +185,5 @@ const stats = computed(() => [
                 </div>
             </div>
         </div>
-
-        <template #footerTitle> Product Dashboard </template>
-        <template #footerDescription> Product Dashboard dsecription</template>
-        <template #footerContent> Product Dashboard </template>
-        <template #footerFooter> Product Dashboard </template>
     </AppLayout>
 </template>

@@ -7,13 +7,24 @@ import { Textarea } from "@/Components/ui/textarea";
 import { Button } from "@/Components/ui/button";
 import { toast } from "@/Components/ui/toast";
 import { Link } from "@inertiajs/vue3";
-import { ArrowLeft, X, Star } from "lucide-vue-next";
+import { ArrowLeft, X, Star, PencilIcon } from "lucide-vue-next";
 import { Card, CardContent } from "@/Components/ui/card";
-import { computed, onBeforeUnmount, ref } from "vue";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
+import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem,
+} from "@/Components/ui/select";
 
 const props = defineProps({
     product: {
         type: Object,
+        required: true,
+    },
+    categories: {
+        type: Array,
         required: true,
     },
 });
@@ -33,11 +44,12 @@ const form = useForm({
     name: props.product.data.name,
     description: props.product.data.description,
     price: props.product.data.price,
+    slug: props.product.data.slug,
+    category_id: props.product.data.category_id,
+    primary_image_index: 0,
     images: [],
     _method: "PUT",
 });
-
-const aaa = ref([]);
 
 const handleImageUpload = (event) => {
     event.preventDefault();
@@ -51,7 +63,6 @@ const handleImageUpload = (event) => {
 
     // Add new files to existing form.images array
     form.images = [...form.images, ...imageFiles];
-    aaa.value = form.images;
 
     // Reset the input value to allow selecting the same file again
     if (event.target.type === "file") {
@@ -109,9 +120,6 @@ const setPrimaryImage = (imageId) => {
 };
 
 const submit = () => {
-    // The form data will include:
-    // - form.images: new images to be uploaded
-    // - Existing images remain untouched in the database
     form.post(route("products.update", props.product.data.id), {
         onSuccess: () => {
             toast({
@@ -120,6 +128,7 @@ const submit = () => {
             });
             // Clear the new uploads after successful submission
             form.images = [];
+            form.reset();
         },
         onError: () => {
             toast({
@@ -129,6 +138,7 @@ const submit = () => {
             });
         },
         preserveScroll: true,
+        preserveState: true,
     });
 };
 
@@ -157,6 +167,11 @@ onBeforeUnmount(() => {
         URL.revokeObjectURL(URL.createObjectURL(file));
     });
 });
+
+const isEditingSlug = ref(false);
+const toggleSlugEdit = () => {
+    isEditingSlug.value = !isEditingSlug.value;
+};
 </script>
 
 <template>
@@ -238,6 +253,90 @@ onBeforeUnmount(() => {
                                         class="text-sm text-red-400"
                                     >
                                         {{ form.errors.price }}
+                                    </span>
+                                </div>
+
+                                <!-- Slug -->
+                                <div class="space-y-2">
+                                    <Label
+                                        for="slug"
+                                        class="text-blue-300 font-orbitron"
+                                        >Slug</Label
+                                    >
+                                    <div class="relative">
+                                        <Input
+                                            id="slug"
+                                            v-model="form.slug"
+                                            placeholder="Enter product slug"
+                                            :error="form.errors.slug"
+                                            required
+                                            :disabled="!isEditingSlug"
+                                            class="pr-12 bg-gray-800 border-yellow-400 text-gray-100 placeholder:text-gray-500 focus:border-blue-300 focus:ring-blue-300"
+                                        />
+                                        <Button
+                                            type="button"
+                                            @click="toggleSlugEdit"
+                                            variant="ghost"
+                                            class="absolute right-2 top-1/2 -translate-y-1/2"
+                                            :class="
+                                                isEditingSlug
+                                                    ? 'text-yellow-400'
+                                                    : 'text-blue-300'
+                                            "
+                                        >
+                                            <span v-if="isEditingSlug"
+                                                >Done</span
+                                            >
+                                            <PencilIcon
+                                                v-else
+                                                class="w-4 h-4"
+                                            />
+                                        </Button>
+                                    </div>
+                                    <span
+                                        v-if="form.errors.slug"
+                                        class="text-sm text-red-400"
+                                    >
+                                        {{ form.errors.slug }}
+                                    </span>
+                                </div>
+
+                                <!-- Categories -->
+                                <div class="space-y-2">
+                                    <Label
+                                        for="categories"
+                                        class="text-blue-300 font-orbitron"
+                                        >Categories</Label
+                                    >
+                                    <Select
+                                        v-model="form.category_id"
+                                        :error="form.errors.category_id"
+                                    >
+                                        <SelectTrigger
+                                            class="w-full bg-gray-800 border-yellow-400 text-gray-100 placeholder:text-gray-500 focus:border-blue-300 focus:ring-blue-300"
+                                        >
+                                            <SelectValue
+                                                placeholder="Select categories"
+                                            />
+                                        </SelectTrigger>
+                                        <SelectContent
+                                            class="bg-gray-800 border border-yellow-400"
+                                        >
+                                            <SelectItem
+                                                v-for="category in categories"
+                                                :key="category.id"
+                                                :value="category.id"
+                                                class="text-gray-100 hover:bg-gray-700 hover:text-blue-300 focus:bg-gray-700 focus:text-blue-300"
+                                            >
+                                                {{ category.name }}
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <span
+                                        v-if="form.errors.category_id"
+                                        class="text-sm text-red-400"
+                                    >
+                                        {{ form.errors.category_id }}
                                     </span>
                                 </div>
                             </div>

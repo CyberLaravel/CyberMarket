@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductImageController;
+use App\Http\Controllers\SellerApplicationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -47,9 +49,7 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 
     Route::resource('products', controller: ProductController::class);
@@ -66,6 +66,10 @@ Route::middleware([
 
     Route::patch('/product-images/{productImage}/set-primary', [ProductImageController::class, 'setPrimary'])
         ->name('product-images.set-primary');
+
+    // Seller Application Routes
+    Route::get('/seller/apply', [SellerApplicationController::class, 'create'])->name('seller.apply');
+    Route::post('/seller/apply', [SellerApplicationController::class, 'store']);
 });
 
 // Define a common middleware group
