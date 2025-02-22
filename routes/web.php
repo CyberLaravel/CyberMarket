@@ -41,9 +41,6 @@ Route::get('/contact', function () {
     return Inertia::render('Contact');
 })->name('contact');
 
-Route::get('/test', function () {
-    return Inertia::render('Test');
-})->name('test');
 
 Route::middleware([
     'auth:sanctum',
